@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    ui->scrollAreaWidgetContents->layout()->setAlignment(Qt::AlignTop);
+
     connect(ui->sliderPeriod, SIGNAL(valueChanged(int)), this, SLOT(periodChanged(int)));
     connect(ui->sliderPairs, SIGNAL(valueChanged(int)), this, SLOT(numberPairsChanged(int)));
     connect(ui->pushButtonNext, SIGNAL(released()), this, SLOT(nextButtonClicked()));
@@ -44,13 +46,22 @@ void MainWindow::backButtonClicked()
 
 void MainWindow::addButtonClicked()
 {
+    ui->scrollArea->hide();
     qDebug() << "add";
-    RuleForm newForm = RuleForm();
-    qDebug() << "init";
-    ui->scrollArea->layout()->addWidget(&newForm);
-    //addedRules.push_back(&newForm);
+    addedRules.push_back(std::make_unique<RuleForm>());
+    ui->scrollAreaWidgetContents->layout()->addWidget(addedRules[addedRules.size() - 1].get());
+    addedRules[addedRules.size() - 1].get()->show();
+    addedRules[addedRules.size() - 1].get()->id = addedRules.size() - 1;
+    addedRules[addedRules.size() - 1].get()->parentWindow = this;
+    ui->scrollArea->show();
 }
 
+void MainWindow::removeRule(int objectIndex) {
+    addedRules.erase(addedRules.begin() + objectIndex);
+    for (int currentIndex{objectIndex}; currentIndex < this->addedRules.size(); currentIndex++) {
+        addedRules[currentIndex].get()->id -= 1;
+    }
+}
 
 void MainWindow::pageChanged(int index)
 {

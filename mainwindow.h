@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "ruleform.h"
 #include <vector>
+#include <memory>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -16,6 +17,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void removeRule(int objectIndex);
 
 private slots:
     void periodChanged(int value);
@@ -25,8 +27,9 @@ private slots:
     void addButtonClicked();
     void pageChanged(int index);
 
+
 private:
     Ui::MainWindow *ui;
-    std::vector<RuleForm*> addedRules;
+    std::vector<std::unique_ptr<RuleForm>> addedRules;
 };
 #endif // MAINWINDOW_H
