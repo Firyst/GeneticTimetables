@@ -40,8 +40,18 @@ struct Class {
 
 
 class Timetable {
-    int m_length;  // count of timetable days'
+    int m_length;  // count of timetable days
 	std::map<Subject*, int> classesAmount;
+
+	// scoring multipliers data
+	// 0: conflicts
+	// 1: time bounds
+	// 2: repeats
+	// 3: gaps
+	// 4: week balance
+	// 5: diversity
+	// 6: preferred begin&end time
+	const std::vector<float>* weights;
 
 
     int getGeneCount();
@@ -49,7 +59,7 @@ class Timetable {
 
 public:
     std::vector<Class> classes;
-	explicit Timetable(int length);
+	explicit Timetable(int length, const std::vector<float>* _weights);
 	void setClassesAmount(std::map<Subject*, int> amount);
 	int getLength() const;
 	int getClassCount();

@@ -12,9 +12,13 @@
 // init random generator
 std::random_device rd2;
 std::mt19937 rng2(rd2());
+std::uniform_int_distribution<int> chanceRandomizer(0, 100);
 
 
-Population::Population(long _size) {
+Population::Population(long _size, std::vector<int>& parameters, std::vector<float>& weights):
+	params(parameters),
+	usedWeights(weights)
+	{
     size = _size;
 }
 
@@ -27,7 +31,7 @@ void Population::setClassesAmount(std::map<Subject *, int> amount) {
 void Population::generateRandom() {
     for (int p{0}; p<this->size; p++) {
         // generate new individual
-        Timetable pop = Timetable(3);  // <- hardcoded
+        Timetable pop = Timetable(3, &usedWeights);  // <- hardcoded
         pop.setClassesAmount(classesAmount);
         pop.randomizeTimetable();
         // add individual to all population
@@ -46,7 +50,7 @@ void Population::crossRoulette() {
 
     for (int popIndex{0}; popIndex<this->size; popIndex++) {
         pops[popIndex].calculateScore();
-        scoredVector.push_back(pops[popIndex].currentScore);
+        scoredVector.push_back(std::max(pops[popIndex].currentScore, 0.0f));
     }
 
     // init roulette selection
@@ -59,6 +63,11 @@ void Population::crossRoulette() {
     // run selection
     for (int popIndex{0}; popIndex<this->size; popIndex++) {
         // use selected type.
+
+		// check if crossover should run
+		if (chanceRandomizer(rng2) > params[0]) {
+			continue;
+		}
 
         // select second index
         int parentId2 = roulette(rng2);
@@ -124,4 +133,17 @@ float Population::getAverageScore() {
 
 void Population::setCrossoverMode(int mode) {
     this->crossoverMode = mode;
+}
+
+Timetable* Population::getBestResult() {
+	Timetable* result = nullptr;
+	float bestScore{-99999};
+
+	for (int popIndex{0}; popIndex<this->size; popIndex++) {
+		if (pops[popIndex].currentScore > bestScore)  {
+			result = &pops[popIndex];
+			bestScore = result->currentScore;
+		}
+	}
+	return result;
 }

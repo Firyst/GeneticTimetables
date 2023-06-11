@@ -50,7 +50,12 @@ Class::Class( Subject *_subject) {
 	subject = _subject;
 }
 
-Timetable::Timetable(int length) {
+//
+// TIMETABLE
+//
+
+Timetable::Timetable(int length, const std::vector<float>* _weights): weights(_weights)
+{
 	m_length = length;
 }
 
@@ -162,7 +167,7 @@ void Timetable::calculateScore() {
     for (int counter{0}; counter<classes.size(); counter++) {
         // check for overlaps
         if (structuredClasses[classes[counter].day][classes[counter].order] != nullptr) {
-            score -= 999.0f;
+            score -= 100.0f * weights->at(0);
         }
 
         structuredClasses[classes[counter].day][classes[counter].order] = &classes[counter];
@@ -204,8 +209,8 @@ void Timetable::calculateScore() {
             gaps -= (7 - lastClassOrder - 1);
         }
 
-        score -= powf(std::abs((float)classCount - averageClassCount), 2);
-        score += 2.0f * (float)(7 - gaps);
+        score -= powf(std::abs((float)classCount - averageClassCount), 2) * weights->at(4);
+        score += weights->at(3) * (float)(7 - gaps);
     }
 
     // store current calculated score into memory
