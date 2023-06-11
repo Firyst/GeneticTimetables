@@ -24,7 +24,7 @@
     <widget class="QSpinBox" name="spinBoxNumberPairs"/>
    </item>
    <item>
-    <widget class="QPushButton" name="pushButtonEdit">
+    <widget class="QPushButton" name="pushButtonMore">
      <property name="text">
       <string>More</string>
      </property>

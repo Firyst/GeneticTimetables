@@ -1,5 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QApplication>
+#include <QTranslator>
+#include <QLibraryInfo>
+#include <QDebug>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -16,7 +20,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButtonBack, SIGNAL(released()), this, SLOT(backButtonClicked()));
     connect(ui->pushButtonAdd, SIGNAL(released()), this, SLOT(addButtonClicked()));
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(pageChanged(int)));
-
 }
 
 MainWindow::~MainWindow()
@@ -77,3 +80,5 @@ void MainWindow::pageChanged(int index)
         ui->pushButtonBack->show();
     }
 }
+
+

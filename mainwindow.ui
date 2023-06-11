@@ -30,7 +30,7 @@
           <item>
            <widget class="QLabel" name="label">
             <property name="text">
-             <string>Choose time period</string>
+             <string>Select time period</string>
             </property>
            </widget>
           </item>
@@ -77,7 +77,7 @@
           <item>
            <widget class="QLabel" name="label_2">
             <property name="text">
-             <string>Choose the number of pairs per day</string>
+             <string>Select the number of pairs per day</string>
             </property>
            </widget>
           </item>

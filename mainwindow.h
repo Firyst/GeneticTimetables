@@ -27,9 +27,10 @@ private slots:
     void addButtonClicked();
     void pageChanged(int index);
 
-
 private:
     Ui::MainWindow *ui;
     std::vector<std::unique_ptr<RuleForm>> addedRules;
+
+
 };
 #endif // MAINWINDOW_H
