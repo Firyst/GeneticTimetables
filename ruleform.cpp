@@ -25,6 +25,5 @@ void RuleForm::editPushButtonClicked()
 {
     SelectorDialog selector;
     selector.exec();
-    //selector->addInformation();
 }
 

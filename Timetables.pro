@@ -14,16 +14,21 @@ TEMPLATE = app
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    mycheckbox.cpp \
+    parameterwidget.cpp \
     ruleform.cpp \
     selectordialog.cpp
 
 HEADERS += \
     mainwindow.h \
+    mycheckbox.h \
+    parameterwidget.h \
     ruleform.h \
     selectordialog.h
 
 FORMS += \
     mainwindow.ui \
+    parameterwidget.ui \
     ruleform.ui \
     selectordialog.ui
 
