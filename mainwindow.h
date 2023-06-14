@@ -7,6 +7,9 @@
 #include <vector>
 #include <memory>
 #include "parameterwidget.h"
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,17 +24,20 @@ public:
     ~MainWindow();
     void removeRule(int objectIndex);
     void createParameterWidgets(QString name, int value, int start, int end, float step, QVBoxLayout* target, QString suffix="x");
+    std::vector<std::unique_ptr<ParameterWidget>> parameters;
+
 
 private slots:
     void nextButtonClicked();
     void backButtonClicked();
     void addButtonClicked();
     void pageChanged(int index);
+    void importClicked();
+    void saveConfigurationClicked();
 
 private:
     Ui::MainWindow *ui;
     std::vector<std::unique_ptr<RuleForm>> addedRules;
-    std::vector<std::unique_ptr<ParameterWidget>> parameters;
 
 };
 #endif // MAINWINDOW_H

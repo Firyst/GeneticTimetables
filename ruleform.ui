@@ -15,13 +15,17 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QLineEdit" name="lineEditSubject"/>
+    <widget class="QLineEdit" name="lineSubject"/>
    </item>
    <item>
-    <widget class="QLineEdit" name="lineEditName"/>
+    <widget class="QLineEdit" name="lineTeacher"/>
    </item>
    <item>
-    <widget class="QSpinBox" name="spinBoxNumberPairs"/>
+    <widget class="QSpinBox" name="spinBoxNumberPairs">
+     <property name="value">
+      <number>1</number>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QPushButton" name="pushButtonMore">
