@@ -50,3 +50,8 @@ void ParameterWidget::valueChanged(int parameter)
 {
     ui->horizontalSlider->setValue(parameter);
 }
+
+float ParameterWidget::setCurrentValue(float value)
+{
+    ui->horizontalSlider->setValue(value / step);
+}

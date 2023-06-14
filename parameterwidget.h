@@ -14,6 +14,7 @@ class ParameterWidget : public QWidget
 public:
     ParameterWidget(QWidget *parent = nullptr, QString title = "Empty", QString name = " cm", int parameter = 28, float newMinimum = 0, float newMaximum = 10, float newStep = 2);
     float getCurrentValue();
+    float setCurrentValue(float value);
     ~ParameterWidget();
 
 private slots:

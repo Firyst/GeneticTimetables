@@ -23,6 +23,7 @@ public:
     QString getSubject();
     QString getTeacher();
     int getAmount();
+    void setValues(QString subject, QString teacher, int amount);
 
 private slots:
     void deletePushButtonClicked();

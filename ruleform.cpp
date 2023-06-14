@@ -47,3 +47,10 @@ int RuleForm::getAmount()
 {
     return ui->spinBoxNumberPairs->value();
 }
+
+void RuleForm::setValues(QString subject, QString teacher, int amount)
+{
+    ui->lineSubject->setText(subject);
+    ui->lineTeacher->setText(teacher);
+    ui->spinBoxNumberPairs->setValue(amount);
+}

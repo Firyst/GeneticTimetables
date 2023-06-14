@@ -113,8 +113,51 @@ void MainWindow::createParameterWidgets(QString name, int value, int start, int 
 
 void MainWindow::importClicked()
 {
-    std::ifstream file("data.json");
-    std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    QString filePath = QFileDialog::getOpenFileName(nullptr, "Open JSON File", "", "JSON Files (*.json)");
+
+    if (!filePath.isEmpty()) {
+        QFile file(filePath);
+        if (file.open(QIODevice::ReadOnly)) {
+            QByteArray jsonData = file.readAll();
+
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
+            if (!jsonDoc.isNull()) {
+                QJsonObject data = jsonDoc.object();
+
+                for (int i=0; i<parameters.size(); i++){
+                    parameters[i].get()->setCurrentValue(data.value("Slider_" + QString::number(i)).toDouble());
+                }
+
+                for (const QJsonValue& value : data.value("rules").toArray()) {
+                    QJsonObject object = value.toObject();
+                    addedRules.push_back(std::make_unique<RuleForm>(nullptr, parameters[0].get()->getCurrentValue(), parameters[1].get()->getCurrentValue()));
+                    RuleForm* addedRule = addedRules[addedRules.size() - 1].get();
+                    ui->scrollAreaWidgetContents->layout()->addWidget(addedRule);
+                    addedRule->show();
+                    addedRule->id = addedRules.size() - 1;
+                    addedRule->parentWindow = this;
+                    addedRule->setValues(object.value("Subject").toString(), object.value("Teacher").toString(), object.value("Amount").toInt());
+
+                    QJsonArray matrix = object.value("Selected").toArray();
+                    int j=0;
+                    for (const QJsonValue& rowValue : matrix){
+                        int i=0;
+                        QJsonObject object = value.toObject();
+                        for (const QJsonValue& cell : rowValue.toArray()){
+                            addedRule->selected[j][i]=cell.toBool();
+                            i++;
+                        }
+                        j++;
+                    }
+                }
+
+            } else {
+                qDebug() << "Failed to parse JSON document.";
+            }
+        } else {
+            qDebug() << "Failed to open file:" << file.errorString();
+        }
+    }
 
 }
 
