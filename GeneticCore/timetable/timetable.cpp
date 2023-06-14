@@ -3,6 +3,7 @@
 #include <string>
 #include "timetable.h"
 #include <random>
+#include <set>
 
 // init random generator
 std::random_device rd;
@@ -54,9 +55,12 @@ Class::Class( Subject *_subject) {
 // TIMETABLE
 //
 
-Timetable::Timetable(int length, const std::vector<float>* _weights): weights(_weights)
+Timetable::Timetable(int length, int classes, const std::vector<float>* _weights):
+	weights(_weights),
+	timetableLength(length),
+	classCount(classes)
 {
-	m_length = length;
+
 }
 
 void Timetable::setClassesAmount(std::map<Subject *, int> amount) {
@@ -64,7 +68,7 @@ void Timetable::setClassesAmount(std::map<Subject *, int> amount) {
 }
 
 int Timetable::getLength() const {
-	return this->m_length;
+	return this->timetableLength;
 }
 
 int Timetable::getClassCount() {
@@ -96,8 +100,8 @@ void Timetable::randomizeTimetable() {
 
 	std::vector<std::pair<int, int>> freeSlots;
 
-	for (int day_i = 0; day_i < m_length; day_i++) {
-		for (int order_i = 0; order_i<7; order_i++) {
+	for (int day_i = 0; day_i < timetableLength; day_i++) {
+		for (int order_i = 0; order_i<classCount; order_i++) {
 			freeSlots.push_back(std::pair<int, int>(day_i, order_i));
 		}
 	}
@@ -118,14 +122,14 @@ void Timetable::randomizeTimetable() {
 
 std::string Timetable::toString() {
 	if (classes.empty()) {
-		return "Empty time table of length " + std::to_string(m_length);
+		return "Empty time table of length " + std::to_string(timetableLength);
 	}
 	std::string output;
 
 	// very bad..
-	for (int day_i=0; day_i < m_length; day_i++) {
+	for (int day_i=0; day_i < timetableLength; day_i++) {
 		output += "=== Day #" + std::to_string(day_i + 1) + ": ===\n";
-		for (int order_i = 0; order_i<7; order_i++) {
+		for (int order_i = 0; order_i<classCount; order_i++) {
 			Class* matchingClass = nullptr;
 
 			// try to find class (bad code)
@@ -160,7 +164,7 @@ void Timetable::calculateScore() {
 
     // init vector for structuring
     for (int day_i{0}; day_i < this->getLength(); day_i++) {
-        structuredClasses.push_back(std::vector<Class*>(7, nullptr));
+        structuredClasses.push_back(std::vector<Class*>(classCount, nullptr));
     }
 
     // go through all classes and struct them
@@ -176,13 +180,22 @@ void Timetable::calculateScore() {
     for (int day_i{0}; day_i < this->getLength(); day_i++) {
         // iterate through days
 
-        int classCount{0};
+        int dayClassCount{0};
         int gaps{0};
+		int repeatedClasses{0};
+		int uniqueClasses{0};
+		Subject* previousClass{nullptr};
+		//std::set<Subject*> allClasses;
+		std::vector<Subject*> allClasses;
 
         int firstClassOrder{-1};
         int lastClassOrder{-1};
 
-        for (int order_i{0}; order_i < 7; order_i++) {
+		if (this->currentScore > 30) {
+			int debug{0};
+		}
+
+        for (int order_i{0}; order_i < this->classCount; order_i++) {
 
             if (structuredClasses[day_i][order_i] != nullptr) {
                 // not a gap, actually a class
@@ -194,7 +207,16 @@ void Timetable::calculateScore() {
                 // mark current class as last
                 lastClassOrder = order_i;
                 // increment class count
-                classCount++;
+                dayClassCount++;
+
+				// add to used classes
+				auto it = std::find(allClasses.begin(), allClasses.end(), structuredClasses[day_i][order_i]->subject);
+				if (it != allClasses.end()) {
+					uniqueClasses++;
+					allClasses.push_back(structuredClasses[day_i][order_i]->subject);
+				}
+
+
             } else {
                 // gap
                 if (firstClassOrder != -1) {
@@ -202,15 +224,34 @@ void Timetable::calculateScore() {
                     gaps++;
                 }
             }
+
+			// check if repeats previous class
+			if (structuredClasses[day_i][order_i] != nullptr) {
+				if (previousClass == structuredClasses[day_i][order_i]->subject) {
+					repeatedClasses++;
+				}
+				previousClass = structuredClasses[day_i][order_i]->subject;
+			}
+
         }
 
         // final score calculations 👇
-        if (classCount != 0) {
-            gaps -= (7 - lastClassOrder - 1);
+        if (dayClassCount != 0) {
+            gaps -= (dayClassCount - lastClassOrder - 1);
         }
 
-        score -= powf(std::abs((float)classCount - averageClassCount), 2) * weights->at(4);
-        score += weights->at(3) * (float)(7 - gaps);
+		// Repeats
+		score -= weights->at(2) * (float)repeatedClasses;
+		// Week balance
+        score -= powf(std::abs((float)dayClassCount - averageClassCount), 2) * weights->at(4);
+		// Gaps
+        score += weights->at(3) * (float)(classCount - gaps);
+		// Diversity (percentage of unique classes)
+		if (uniqueClasses + dayClassCount != 0) {
+			score += weights->at(5) * ((float)uniqueClasses / (float)dayClassCount);
+		}
+
+
     }
 
     // store current calculated score into memory

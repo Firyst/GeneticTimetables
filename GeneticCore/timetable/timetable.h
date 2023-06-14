@@ -40,7 +40,8 @@ struct Class {
 
 
 class Timetable {
-    int m_length;  // count of timetable days
+    const int timetableLength;  // count of timetable days
+	const int classCount;  // max classes every day
 	std::map<Subject*, int> classesAmount;
 
 	// scoring multipliers data
@@ -53,13 +54,16 @@ class Timetable {
 	// 6: preferred begin&end time
 	const std::vector<float>* weights;
 
-
     int getGeneCount();
 	bool isSlotFree(int day, int order);
 
 public:
+	// this bool changes to true if some genes were changed, so the score must be calculated again
+	// used to optimize unnecessary calculations
+	bool scoreChanged = true;
+
     std::vector<Class> classes;
-	explicit Timetable(int length, const std::vector<float>* _weights);
+	explicit Timetable(int length, int classes, const std::vector<float>* _weights);
 	void setClassesAmount(std::map<Subject*, int> amount);
 	int getLength() const;
 	int getClassCount();

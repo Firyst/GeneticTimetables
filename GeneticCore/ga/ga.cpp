@@ -12,14 +12,21 @@
 // init random generator
 std::random_device rd2;
 std::mt19937 rng2(rd2());
+// randomizer for calculating chances
 std::uniform_int_distribution<int> chanceRandomizer(0, 100);
 
 
-Population::Population(long _size, std::vector<int>& parameters, std::vector<float>& weights):
+Population::Population(long _size, int dayCount, int amount,
+					   std::vector<int>& parameters,
+					   std::vector<float>& weights):
 	params(parameters),
-	usedWeights(weights)
-	{
+	timetableLength(dayCount),
+	classCount(amount),
+	usedWeights(weights){
     size = _size;
+	// initialize random number generators
+	randomDay = std::uniform_int_distribution<int>(0, dayCount - 1);
+	randomOrder = std::uniform_int_distribution<int>(0, amount - 1);
 }
 
 
@@ -31,12 +38,13 @@ void Population::setClassesAmount(std::map<Subject *, int> amount) {
 void Population::generateRandom() {
     for (int p{0}; p<this->size; p++) {
         // generate new individual
-        Timetable pop = Timetable(3, &usedWeights);  // <- hardcoded
+        Timetable pop = Timetable(timetableLength, classCount, &usedWeights);
         pop.setClassesAmount(classesAmount);
         pop.randomizeTimetable();
         // add individual to all population
         pops.push_back(std::move(pop));
     }
+	randomGene = std::uniform_int_distribution<int>(0, pops[0].getClassCount() - 1);
 }
 
 //
@@ -49,16 +57,15 @@ void Population::crossRoulette() {
     std::vector<float> scoredVector;
 
     for (int popIndex{0}; popIndex<this->size; popIndex++) {
-        pops[popIndex].calculateScore();
+		if (pops[popIndex].scoreChanged) {
+        	pops[popIndex].calculateScore();
+			pops[popIndex].scoreChanged = false;
+		}
         scoredVector.push_back(std::max(pops[popIndex].currentScore, 0.0f));
     }
 
     // init roulette selection
     std::discrete_distribution<> roulette(scoredVector.begin(), scoredVector.end());
-
-    // init gene selector
-    // !!! needs to be rewritten soon...
-    std::uniform_int_distribution<int> geneSelector(0, pops[0].getClassCount() - 1);
 
     // run selection
     for (int popIndex{0}; popIndex<this->size; popIndex++) {
@@ -75,15 +82,29 @@ void Population::crossRoulette() {
         switch (crossoverMode) {
             case 0:
                 // default crossover
-                defaultCrossover(&pops[popIndex], &pops[parentId2], geneSelector(rng2));
+                defaultCrossover(&pops[popIndex], &pops[parentId2], randomGene(rng2));
                 break;
             case 1:
                 // single crossover
-                singleGeneCrossover(&pops[popIndex], &pops[parentId2], geneSelector(rng2));
+                singleGeneCrossover(&pops[popIndex], &pops[parentId2], randomGene(rng2));
                 break;
         }
     }
+	float newScore = getAverageScore();
+	if (newScore - genAverageScore >= 0 && (newScore - genAverageScore) <= ((float)params.at(2) / 10000.0f)) {
+		// run mutations
+		for (int popIndex{0}; popIndex<this->size; popIndex++) {
+			// use selected type.
 
+			// check if pop should mutate
+			if (chanceRandomizer(rng2) > params[1]) {
+				continue;
+			}
+
+			smartMutation(&pops[popIndex]);
+		}
+	}
+	genAverageScore = newScore;
 }
 
 //
@@ -107,11 +128,56 @@ void Population::defaultCrossover(Timetable *parent1, Timetable *parent2, int cr
         parent1->classes[geneId].order = parent2->classes[geneId].order;
         parent1->classes[geneId].day = parent2->classes[geneId].day;
     }
+
+	parent1->scoreChanged = true;
 }
 
 void Population::singleGeneCrossover(Timetable *parent1, Timetable *parent2, int crossoverPoint) {
     parent1->classes[crossoverPoint].order = parent2->classes[crossoverPoint].order;
     parent1->classes[crossoverPoint].day = parent2->classes[crossoverPoint].day;
+
+	parent1->scoreChanged = true;
+}
+
+
+//
+// MUTATIONS
+//
+
+void Population::randomMutation(Timetable *individual) {
+	individual->classes[randomGene(rng2)].day = randomDay(rng2);
+	individual->classes[randomGene(rng2)].order = randomOrder(rng2);
+	individual->scoreChanged = true;
+}
+
+void Population::smartMutation(Timetable* individual) {
+	// select random gene that will be moved
+	Class* modGene = &individual->classes[randomGene(rng2)];
+	individual->scoreChanged = true;
+	// generate new position
+	int newDay{randomDay(rng2)};
+	int newOrder{randomOrder(rng2)};
+
+	// check if class at that position exists
+	for (int geneI{0}; geneI < individual->classes.size(); geneI++) {
+		if (individual->classes[geneI].day == newDay && individual->classes[geneI].order == newOrder) {
+			// exists
+			if (individual->classes[geneI].subject == modGene->subject) {
+				// nothing to change..
+				return;
+			}
+
+			// copy current class
+			Class copiedClass = *modGene;
+			*modGene = individual->classes[geneI];
+			individual->classes[geneI] = copiedClass;
+			return;
+		}
+	}
+
+	// no class at this position
+	modGene->day = newDay;
+	modGene->order = newOrder;
 }
 
 void Population::evolve(long iterations) {
