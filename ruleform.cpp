@@ -33,14 +33,14 @@ void RuleForm::editPushButtonClicked()
     selector.exec();
 }
 
-std::string RuleForm::getSubject()
+QString RuleForm::getSubject()
 {
-    return ui->lineSubject->text().toStdString();
+    return ui->lineSubject->text();
 }
 
-std::string RuleForm::getTeacher()
+QString RuleForm::getTeacher()
 {
-    return ui->lineTeacher->text().toStdString();
+    return ui->lineTeacher->text();
 }
 
 int RuleForm::getAmount()

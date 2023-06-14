@@ -20,8 +20,8 @@ public:
     ~RuleForm();
 
     std::vector<std::vector<bool>> selected;
-    std::string getSubject();
-    std::string getTeacher();
+    QString getSubject();
+    QString getTeacher();
     int getAmount();
 
 private slots:

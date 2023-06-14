@@ -10,6 +10,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
+#include <QJsonArray>
 #include <iostream>
 #include <fstream>
 
@@ -120,60 +121,43 @@ void MainWindow::importClicked()
 
 void MainWindow::saveConfigurationClicked()
 {
-    rapidjson::Document data; // создание объекта Document
-    rapidjson::Document::AllocatorType& dAlloc = data.GetAllocator();
-    data.SetObject(); // задание типа объекта
+    //QJsonDocument data; // создание объекта Document
+    QJsonObject data;
 
     // добавление пар ключ-значение в объект
     for (int i=0; i<parameters.size(); i++){
-        std::string parName = "Slider_" + std::to_string(i);
-        rapidjson::Value jsonKey;
-        jsonKey.SetString(parName.c_str(), static_cast<rapidjson::SizeType>(parName.length()), dAlloc);
-        data.AddMember(jsonKey, parameters[i].get()->getCurrentValue(), dAlloc);
+        data.insert("Slider_" + QString::number(i), parameters[i].get()->getCurrentValue());
     }
 
-    rapidjson::Value ruleArray(rapidjson::kArrayType);
+    QJsonArray ruleArray;
 
     for (int i = 0; i < addedRules.size() ; i++){
-        rapidjson::Value ruleObject(rapidjson::kObjectType);
-        rapidjson::Value jsonKey1;
-        std::string parName1 = (addedRules[i].get()->getSubject());
-        jsonKey1.SetString(parName1.c_str(), static_cast<rapidjson::SizeType>(parName1.length()), dAlloc);
-        ruleObject.AddMember("Subject", jsonKey1, dAlloc);
-
-        rapidjson::Value jsonKey2;
-        std::string parName2 = (addedRules[i].get()->getTeacher());
-        jsonKey2.SetString(parName2.c_str(), static_cast<rapidjson::SizeType>(parName2.length()), dAlloc);
-        ruleObject.AddMember("Teacher", jsonKey2, dAlloc);
-
-        ruleObject.AddMember("Amount", addedRules[i].get()->getAmount(), dAlloc);
+        QJsonObject ruleObject;
+        ruleObject.insert("Subject", addedRules[i].get()->getSubject());
+        ruleObject.insert("Teacher", addedRules[i].get()->getTeacher());
+        ruleObject.insert("Amount", addedRules[i].get()->getAmount());
 
         std::vector<std::vector<bool>> matrix = addedRules[i].get()->selected;
-        rapidjson::Value ruleMatrix(rapidjson::kArrayType);
+        QJsonArray ruleMatrix;
 
         for (const auto& row : matrix)
         {
-            rapidjson::Value jsonRow(rapidjson::kArrayType);
+            QJsonArray jsonRow;
             for (const auto& value : row)
             {
-                rapidjson::Value jsonValue(value);
-                jsonRow.PushBack(jsonValue, dAlloc);
+                jsonRow.append(value);
             }
-            ruleMatrix.PushBack(jsonRow, dAlloc);
+            ruleMatrix.append(jsonRow);
         }
 
-        ruleObject.AddMember("Selected", ruleMatrix, dAlloc);
-        ruleArray.PushBack(ruleObject, dAlloc);
+        ruleObject.insert("Selected", ruleMatrix);
+        ruleArray.append(ruleObject);
     }
-    data.AddMember("rules", ruleArray, dAlloc);
+    data.insert("rules", ruleArray);
 
-
+    QJsonDocument result(data);
 
     QString fileName = QFileDialog::getSaveFileName(nullptr, "Сохранить JSON файл", "", "JSON Files (*.json)");
-
-
-
-
     // Если пользователь выбрал файл
     if (!fileName.isEmpty()) {
         // Создание файла для записи
@@ -181,11 +165,8 @@ void MainWindow::saveConfigurationClicked()
 
         // Попытка открыть файл в режиме записи
         if (file.open(QIODevice::WriteOnly)) {
-            // Преобразование rapidjson::Document в QJsonDocument
-            QJsonDocument jsonDoc = QJsonDocument::fromJson(data.GetString());
-
             // Запись QJsonDocument в файл
-            file.write(jsonDoc.toJson());
+            file.write(result.toJson());
             file.close();
             qDebug() << "Файл сохранен:" << fileName;
         } else {

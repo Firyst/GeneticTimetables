@@ -7,9 +7,7 @@
 #include <vector>
 #include <memory>
 #include "parameterwidget.h"
-#include "rapidjson/document.h"
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
