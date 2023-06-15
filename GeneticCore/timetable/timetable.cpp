@@ -102,7 +102,7 @@ void Timetable::randomizeTimetable() {
 
 	for (int day_i = 0; day_i < timetableLength; day_i++) {
 		for (int order_i = 0; order_i<classCount; order_i++) {
-			freeSlots.push_back(std::pair<int, int>(day_i, order_i));
+			freeSlots.emplace_back(day_i, order_i);
 		}
 	}
 
@@ -114,7 +114,7 @@ void Timetable::randomizeTimetable() {
             std::uniform_int_distribution<int> uni(0, freeSlots.size() - 1);
 			int randomId = uni(rng);
 			std::pair<int, int> slot = freeSlots[randomId];
-			classes.push_back(Class(slot.first, slot.second, key));
+			classes.emplace_back(slot.first, slot.second, key);
 			freeSlots.erase(freeSlots.begin() + randomId);
 		}
 	}
@@ -154,7 +154,6 @@ std::string Timetable::toString() {
 void Timetable::calculateScore() {
     /**
      * @brief calculates score for current individual and set it as variable
-     *
      */
 
     float averageClassCount = (float)this->getClassCount() / (float)this->getLength();
@@ -164,7 +163,7 @@ void Timetable::calculateScore() {
 
     // init vector for structuring
     for (int day_i{0}; day_i < this->getLength(); day_i++) {
-        structuredClasses.push_back(std::vector<Class*>(classCount, nullptr));
+        structuredClasses.emplace_back(classCount, nullptr);
     }
 
     // go through all classes and struct them

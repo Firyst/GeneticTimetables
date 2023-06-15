@@ -50,6 +50,13 @@ class Population {
     static void defaultCrossover(Timetable* parent1, Timetable* parent2, int crossoverPoint);
     static void singleGeneCrossover(Timetable* parent1, Timetable* parent2, int crossoverPoint);
 
+    /**
+     * @brief does not create overlapping classes during proccess
+     * @param parent1
+     * @param parent2
+     */
+    void smartSingleCrossover(Timetable* parent1, Timetable* parent2);
+
 	// mutations
 	/**
 	 * @brief very basic random mutation

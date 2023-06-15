@@ -7,6 +7,7 @@
 #include "ga.h"
 #include <random>
 #include <map>
+#include <algorithm>
 
 
 // init random generator
@@ -88,6 +89,9 @@ void Population::crossRoulette() {
                 // single crossover
                 singleGeneCrossover(&pops[popIndex], &pops[parentId2], randomGene(rng2));
                 break;
+            case 2:
+                smartSingleCrossover(&pops[popIndex], &pops[parentId2]);
+                break;
         }
     }
 	float newScore = getAverageScore();
@@ -97,7 +101,7 @@ void Population::crossRoulette() {
 			// use selected type.
 
 			// check if pop should mutate
-			if (chanceRandomizer(rng2) > params[1]) {
+			if (chanceRandomizer(rng2) >= params[1]) {
 				continue;
 			}
 
@@ -137,6 +141,53 @@ void Population::singleGeneCrossover(Timetable *parent1, Timetable *parent2, int
     parent1->classes[crossoverPoint].day = parent2->classes[crossoverPoint].day;
 
 	parent1->scoreChanged = true;
+}
+
+void Population::smartSingleCrossover(Timetable* parent1, Timetable* parent2) {
+    // select gene to pass from second to first
+    int crossoverPoint = randomGene(rng2);
+    // gene that overlaps geneId (if exists)
+    int geneId2{-1};
+
+    // generate list of all free slots
+    std::vector<std::pair<int, int>> freeSlots;
+    for (int day_i = 0; day_i < timetableLength; day_i++) {
+        for (int order_i = 0; order_i<classCount; order_i++) {
+            freeSlots.emplace_back(day_i, order_i);
+        }
+    }
+
+    // check if class at that position exists in first parent
+    for (int geneI{0}; geneI < parent1->classes.size(); geneI++) {
+        if (geneId2 == -1 && parent1->classes[geneI].day == parent2->classes[crossoverPoint].day &&
+                             parent1->classes[geneI].order == parent2->classes[crossoverPoint].order) {
+            // exists
+            geneId2 = geneI;
+        }
+
+        // remove free slot
+        std::pair<int, int> slot{parent1->classes[geneI].day, parent1->classes[geneI].order};
+        for (auto iter = freeSlots.begin(); iter != freeSlots.end(); ++iter )
+        {
+            if (*iter == slot)
+            {
+                freeSlots.erase( iter );
+                break;
+            }
+        }
+
+    }
+
+    if (geneId2 != -1) {
+        std::pair<int, int> selectedSlot = freeSlots[rand() % freeSlots.size()];
+        // move class at crossover slot
+        parent1->classes[geneId2].day = selectedSlot.first;
+        parent1->classes[geneId2].order = selectedSlot.second;
+    }
+    // no overlap will be made
+    parent1->classes[crossoverPoint].order = parent2->classes[crossoverPoint].order;
+    parent1->classes[crossoverPoint].day = parent2->classes[crossoverPoint].day;
+    parent1->scoreChanged = true;
 }
 
 

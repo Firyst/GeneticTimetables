@@ -22,19 +22,19 @@ int main() {
 											  {&s3, 6}};
 
 
-	std::vector<int> inputParams = {20, 5, 0};
-	std::vector<float> scoringParams = {25.0f, 1.0f, -3.0f, 3.0f, 1.0f, 1.0f, 1.0f};
-    Population myPops = Population(1600, 6, 7, inputParams, scoringParams);
+	std::vector<int> inputParams = {25, 5, 1};
+	std::vector<float> scoringParams = {25.0f, 1.0f, 2.0f, 4.0f, 1.0f, 1.0f, 1.0f};
+    Population myPops = Population(3000, 6, 7, inputParams, scoringParams);
     myPops.setCrossoverMode(1);
     myPops.setClassesAmount(timetableData);
     myPops.generateRandom();
 
 
-    for (int p=0; p<5000; p ++) {
+    for (int p=0; p<1000; p ++) {
 
-        myPops.evolve(10);
+        myPops.evolve(20);
 
-        std::cout << "gen: " << p * 10 << "; score: " << myPops.genAverageScore << std::endl;
+        std::cout << "gen: " << p * 20 << "; score: " << myPops.genAverageScore << std::endl;
 
     }
 
