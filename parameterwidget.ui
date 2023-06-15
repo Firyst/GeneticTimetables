@@ -41,8 +41,19 @@
      </item>
      <item>
       <widget class="QLabel" name="labelValue">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>TextLabel</string>
+       </property>
+       <property name="margin">
+        <number>1</number>
+       </property>
+       <property name="indent">
+        <number>4</number>
        </property>
       </widget>
      </item>
