@@ -17,20 +17,25 @@ SOURCES += \
     mycheckbox.cpp \
     parameterwidget.cpp \
     ruleform.cpp \
-    selectordialog.cpp
+    selectordialog.cpp \
+    GeneticCore/timetable/timetable.cpp \
+    GeneticCore/ga/ga.cpp
 
 HEADERS += \
     mainwindow.h \
     mycheckbox.h \
     parameterwidget.h \
     ruleform.h \
-    selectordialog.h
+    selectordialog.h \
+    GeneticCore/timetable/timetable.h \
+    GeneticCore/ga/ga.h
 
 FORMS += \
     mainwindow.ui \
     parameterwidget.ui \
     ruleform.ui \
-    selectordialog.ui
+    selectordialog.ui \
+
 
 TRANSLATIONS += \
     QtLanguage_ru.ts \

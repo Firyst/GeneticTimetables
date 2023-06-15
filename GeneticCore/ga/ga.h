@@ -5,7 +5,6 @@
 #ifndef GA_PLAYGROUND_GA_H
 #define GA_PLAYGROUND_GA_H
 
-#endif //GA_PLAYGROUND_GA_H
 
 #include "../timetable/timetable.h"
 #include <vector>
@@ -75,6 +74,7 @@ class Population {
 	void smartMutation(Timetable* individual);
 
 public:
+    Population(const Population&) = delete;
     void generateRandom();
     void setClassesAmount(std::map<Subject*, int> amount);
     void setCrossoverMode(int mode);
@@ -93,9 +93,11 @@ public:
 	 * {conflicts, timeBounds, repeats, gaps, weekBalance, diversity, beginEndTime}
 
 	 */
-    Population(long size, int dayCount, int amount, std::vector<int>& parameters, std::vector<float>& weights);
+    Population(long size, int dayCount, int amount, const std::vector<int>& parameters, const std::vector<float>& weights);
 
 	Timetable* getBestResult();
 
 	float genAverageScore{0};
 };
+
+#endif //GA_PLAYGROUND_GA_H

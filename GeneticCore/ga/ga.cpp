@@ -18,8 +18,8 @@ std::uniform_int_distribution<int> chanceRandomizer(0, 100);
 
 
 Population::Population(long _size, int dayCount, int amount,
-					   std::vector<int>& parameters,
-					   std::vector<float>& weights):
+                       const std::vector<int>& parameters,
+                       const std::vector<float>& weights):
 	params(parameters),
 	timetableLength(dayCount),
 	classCount(amount),
@@ -29,6 +29,7 @@ Population::Population(long _size, int dayCount, int amount,
 	randomDay = std::uniform_int_distribution<int>(0, dayCount - 1);
 	randomOrder = std::uniform_int_distribution<int>(0, amount - 1);
 }
+
 
 
 void Population::setClassesAmount(std::map<Subject *, int> amount) {

@@ -4,6 +4,7 @@
 #include "timetable.h"
 #include <random>
 #include <set>
+#include <algorithm>
 
 // init random generator
 std::random_device rd;
@@ -25,9 +26,10 @@ int getRandomNumber(int min, int max)
 
 /// classes for timetable realisation
 
-Subject::Subject(int _id, std::string _name) {
+Subject::Subject(int _id, std::string _name, std::vector<std::vector<bool>> slots) {
     id = _id;
     name = std::move(_name);
+    availableSlots = slots;
 }
 
 

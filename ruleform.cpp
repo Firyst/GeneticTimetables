@@ -3,10 +3,12 @@
 #include "mainwindow.h"
 #include "selectordialog.h"
 
+
 RuleForm::RuleForm(QWidget *parent, int days, int pairs) :
     QWidget(parent),
     ui(new Ui::RuleForm),
-    selected(days+2, std::vector<bool>(pairs+2, false))
+    selected(days+2, std::vector<bool>(pairs+2, false)),
+    subjectData(this->id, "Unnamed", selected)
 {
     this->days = days;
     this->pairs = pairs;
@@ -15,6 +17,9 @@ RuleForm::RuleForm(QWidget *parent, int days, int pairs) :
     connect(ui->pushButtonDelete, SIGNAL(released()), this, SLOT(deletePushButtonClicked()));
 
     ui->spinBoxNumberPairs->setMaximum(days*pairs);
+
+    subjectData = Subject(1, "test", selected);
+
 
 }
     RuleForm::~RuleForm()
@@ -53,4 +58,8 @@ void RuleForm::setValues(QString subject, QString teacher, int amount)
     ui->lineSubject->setText(subject);
     ui->lineTeacher->setText(teacher);
     ui->spinBoxNumberPairs->setValue(amount);
+}
+
+Subject* getSubjectData() {
+
 }

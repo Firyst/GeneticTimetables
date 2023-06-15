@@ -1,6 +1,11 @@
 //
 // Created by Philipp on 30.05.2023.
 //
+
+
+#ifndef GA_PLAYGROUND_TIMETABLE_H
+#define GA_PLAYGROUND_TIMETABLE_H
+
 #include <string>
 #include <vector>
 #include <set>
@@ -8,16 +13,12 @@
 #include <random>
 
 
-#ifndef GA_PLAYGROUND_TIMETABLE_H
-#define GA_PLAYGROUND_TIMETABLE_H
-
-#endif //GA_PLAYGROUND_TIMETABLE_H
-
 struct Subject{
-    Subject(int _id, std::string _name);
+    Subject(int _id, std::string _name, std::vector<std::vector<bool>> slots);
 
     int id;
     std::string name;
+    std::vector<std::vector<bool>> availableSlots;
     // maybe something else here..
 };
 
@@ -73,3 +74,4 @@ public:
     float currentScore{0};
 };
 
+#endif //GA_PLAYGROUND_TIMETABLE_H

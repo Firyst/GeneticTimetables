@@ -2,6 +2,7 @@
 #define RULEFORM_H
 
 #include <QWidget>
+#include "GeneticCore/timetable/timetable.h"
 
 class MainWindow;
 
@@ -24,6 +25,7 @@ public:
     QString getTeacher();
     int getAmount();
     void setValues(QString subject, QString teacher, int amount);
+    Subject* getSubjectData();
 
 private slots:
     void deletePushButtonClicked();
@@ -32,6 +34,7 @@ private slots:
 private:
     int days;
     int pairs;
+    Subject subjectData;
     Ui::RuleForm *ui;
 };
 

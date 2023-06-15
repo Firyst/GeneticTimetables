@@ -12,25 +12,30 @@
 #include <QJsonValue>
 #include <QJsonArray>
 #include <iostream>
-#include <fstream>
-
 
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    : QMainWindow(parent),
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
     ui->scrollAreaWidgetContents->layout()->setAlignment(Qt::AlignTop);
 
+
+
+    // connect buttons
     connect(ui->pushButtonNext, SIGNAL(released()), this, SLOT(nextButtonClicked()));
     connect(ui->pushButtonBack, SIGNAL(released()), this, SLOT(backButtonClicked()));
     connect(ui->pushButtonAdd, SIGNAL(released()), this, SLOT(addButtonClicked()));
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(pageChanged(int)));
     connect(ui->importButton, SIGNAL(released()), this, SLOT(importClicked()));
     connect(ui->saveConfigurationButton, SIGNAL(released()), this, SLOT(saveConfigurationClicked()));
+    connect(ui->runButton, SIGNAL(released()), this, SLOT(startGeneration()));
     pageChanged(0);
+
+    // setup my thread
+    connect(&workerThread, SIGNAL(progressSignal(int)), this, SLOT(generationProgress(int)));
 
 
     // create all sliders
@@ -38,22 +43,24 @@ MainWindow::MainWindow(QWidget *parent)
     createParameterWidgets( "Select the number of pairs per day", 2, 2, 8, 1, ui->mainLayout, " pairs");
 
 
-    createParameterWidgets( "Conflicts", 25, 10, 100, 1, ui->criteriaLayout);
-    createParameterWidgets( "Time bounds", 20, 0, 10, 0.1, ui->criteriaLayout);
-    createParameterWidgets( "Repeats", 10, -5, 5, 0.1, ui->criteriaLayout);
-    createParameterWidgets( "Gaps", 20, 0, 10, 0.1, ui->criteriaLayout);
-    createParameterWidgets( "Week balance", 10, 0, 10, 0.1, ui->criteriaLayout);
-    createParameterWidgets( "Diversity", 10, -5, 5, 0.1, ui->criteriaLayout);
-    createParameterWidgets( "Preferred begin and End time", 10, 0, 10, 0.1, ui->criteriaLayout);
+    createParameterWidgets( "Conflicts", 25, 10, 100, 1, ui->criteriaLayout);       // 2
+    createParameterWidgets( "Time bounds", 20, 0, 10, 0.1, ui->criteriaLayout);     // 3
+    createParameterWidgets( "Repeats", 10, -5, 5, 0.1, ui->criteriaLayout);         // 4
+    createParameterWidgets( "Gaps", 20, 0, 10, 0.1, ui->criteriaLayout);            // 5
+    createParameterWidgets( "Week balance", 10, 0, 10, 0.1, ui->criteriaLayout);    // 6
+    createParameterWidgets( "Diversity", 10, -5, 5, 0.1, ui->criteriaLayout);       // 7
+    createParameterWidgets( "Preferred begin and End time", 10, 0, 10, 0.1, ui->criteriaLayout); // 8
 
-    createParameterWidgets( "Population size", 20, 50, 2500, 50, ui->layoutParameters);
-    createParameterWidgets( "Crossover chance", 35, 0, 100, 1, ui->layoutParameters, "%");
+    createParameterWidgets( "Generations", 20, 500, 100000, 500, ui->layoutParameters, "");     // 9
+    createParameterWidgets( "Population size", 20, 50, 2500, 50, ui->layoutParameters, "");     // 10
+    createParameterWidgets( "Crossover chance", 35, 0, 100, 1, ui->layoutParameters, "%");      // 11
     createParameterWidgets( "Mutation chance", 24, 0, 100, 1, ui->layoutParameters, "%");
     createParameterWidgets( "Mutation threshold", 10, 0, 1, 0.005, ui->layoutParameters);
 
     ui->mainLayout->setAlignment(Qt::AlignTop);
     ui->criteriaLayout->setAlignment(Qt::AlignTop);
     ui->layoutParameters->setAlignment(Qt::AlignTop);
+
 }
 
 MainWindow::~MainWindow()
@@ -221,5 +228,30 @@ void MainWindow::saveConfigurationClicked()
 }
 
 
+void MainWindow::startGeneration() {
+    this->ui->runButton->setEnabled(false);
 
+    // initalize vector of GA parameters
+    std::vector<int> inputParams = {(int)parameters[11]->getCurrentValue(),
+                                    (int)parameters[12]->getCurrentValue(),
+                                    (int)parameters[13]->getCurrentValue()};
+
+    // initialize vector of weights
+    std::vector<float> weights;
+    for (int wI{2}; wI<8; wI++) {
+        weights.push_back(parameters[wI]->getCurrentValue());
+    }
+
+    // create new population
+    Population newPopulation(parameters[10]->getCurrentValue(), parameters[0]->getCurrentValue(), parameters[1]->getCurrentValue(), inputParams, weights);
+    workerThread.population = std::move(newPopulation);
+}
+
+void MainWindow::generationProgress(int generation) {
+    qDebug() << generation;
+}
+
+void MainWindow::generationFinished() {
+
+}
 
