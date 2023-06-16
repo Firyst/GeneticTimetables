@@ -12,6 +12,8 @@ TEMPLATE = app
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    GeneticCore/uniquepriorityqueue.cpp \
+    Tests/testqueue.cpp \
     main.cpp \
     mainwindow.cpp \
     mycheckbox.cpp \
@@ -22,6 +24,8 @@ SOURCES += \
     GeneticCore/ga/ga.cpp
 
 HEADERS += \
+    GeneticCore/uniquepriorityqueue.h \
+    Tests/doctest.h \
     mainwindow.h \
     mycheckbox.h \
     parameterwidget.h \
@@ -46,6 +50,7 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-DISTFILES +=
+DISTFILES += \
+    Tests/doctest.h.gch
 
 RESOURCES +=

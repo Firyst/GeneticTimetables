@@ -35,8 +35,8 @@ struct Class {
 
 
 class Timetable {
-    const int timetableLength;  // count of timetable days
-	const int classCount;  // max classes every day
+    int timetableLength;  // count of timetable days
+    int classCount;  // max classes every day
 	std::map<Subject*, int> classesAmount;
 
 	// scoring multipliers data
@@ -47,7 +47,7 @@ class Timetable {
 	// 4: week balance
 	// 5: diversity
 	// 6: preferred begin&end time
-	const std::vector<float>* weights;
+    std::vector<float>* weights;
 
     int getGeneCount();
 	bool isSlotFree(int day, int order);
@@ -58,7 +58,7 @@ public:
 	bool scoreChanged = true;
 
     std::vector<Class> classes;
-	explicit Timetable(int length, int classes, const std::vector<float>* _weights);
+    Timetable(int length, int classes, std::vector<float>* _weights);
 	void setClassesAmount(std::map<Subject*, int> amount);
 	int getLength() const;
 	int getClassCount();
@@ -66,6 +66,14 @@ public:
 	std::string toString();
     void calculateScore();
     float currentScore{0};
+
+    /**
+     * Actually is inverted, so the std::priority queue could store best results.
+     * @brief operator < compare scores of timetables. does not recalculate
+     * @param other second timetable to compare
+     * @return true if current timetable score is larger
+     */
+    bool operator<(const Timetable& other) const;
 };
 
 #endif //GA_PLAYGROUND_TIMETABLE_H

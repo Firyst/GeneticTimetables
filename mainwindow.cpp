@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->importButton, SIGNAL(released()), this, SLOT(importClicked()));
     connect(ui->saveConfigurationButton, SIGNAL(released()), this, SLOT(saveConfigurationClicked()));
     connect(ui->runButton, SIGNAL(released()), this, SLOT(startGeneration()));
+    connect(ui->resultSelector, SIGNAL(valueChanged(int)), this, SLOT(viewResult(int)));
     pageChanged(0);
 
     // setup my thread
@@ -280,6 +281,13 @@ void MainWindow::generationFinished() {
     ui->runButton->setEnabled(true);
     ui->progressBar->setValue(100);
     setTimetableOutput(workerThread.population.get()->getBestResult());
+
+    bestResultBuffer.clear();
+    while(!workerThread.population->bestResults.empty()) {
+        bestResultBuffer.push_back(workerThread.population->bestResults.top());
+        workerThread.population->bestResults.pop();
+    }
+    ui->resultSelector->setValue(1);
 }
 
 void MainWindow::setTimetableOutput(Timetable* table) {
@@ -318,8 +326,11 @@ void MainWindow::setTimetableOutput(Timetable* table) {
     }
 
     ui->outputTable->setModel(&outputTableModel);
+}
 
-
+void MainWindow::viewResult(int position) {
+    qDebug() << bestResultBuffer[100 - position].currentScore;
+    setTimetableOutput(&bestResultBuffer[100 - position]);
 }
 
 void GAThread::run(void) {

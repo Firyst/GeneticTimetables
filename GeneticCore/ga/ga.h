@@ -9,6 +9,7 @@
 #include "../timetable/timetable.h"
 #include <vector>
 #include <random>
+#include <queue>
 
 float score(Timetable* timetable);
 
@@ -16,6 +17,9 @@ class Population {
     std::vector<Timetable> pops;
     std::map<Subject*, int> classesAmount;
     long size;
+
+    // the score of last of top-100 results. Used to optimize calculations.
+    float bestScoreThreshold{0};
 
 	const int timetableLength;
 	const int classCount;
@@ -84,6 +88,8 @@ public:
     void evolve(long iterations);
 
     float getAverageScore();
+
+    std::priority_queue<Timetable> bestResults;
 
 	/**
 	 * Population constructor

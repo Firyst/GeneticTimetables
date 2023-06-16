@@ -50,12 +50,11 @@ Class::Class( Subject *_subject) {
 // TIMETABLE
 //
 
-Timetable::Timetable(int length, int classes, const std::vector<float>* _weights):
-	weights(_weights),
-	timetableLength(length),
-	classCount(classes)
+Timetable::Timetable(int length, int classes, std::vector<float>* _weights)
 {
-
+    weights = _weights;
+    timetableLength = length;
+    classCount = classes;
 }
 
 void Timetable::setClassesAmount(std::map<Subject *, int> amount) {
@@ -255,4 +254,10 @@ void Timetable::calculateScore() {
 
     // store current calculated score into memory
     currentScore = score;
+}
+
+bool Timetable::operator<(const Timetable& other) const
+{
+    // compare scores
+    return currentScore > other.currentScore;
 }

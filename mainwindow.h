@@ -60,11 +60,13 @@ private slots:
     void startGeneration();
     void generationProgress(long generation);
     void generationFinished();
+    void viewResult(int position);
 
 private:
     Ui::MainWindow *ui;
     std::vector<std::unique_ptr<RuleForm>> addedRules;
     GAThread workerThread;
+    std::vector<Timetable> bestResultBuffer;
     void setTimetableOutput(Timetable* table);
     QStandardItemModel outputTableModel;
 

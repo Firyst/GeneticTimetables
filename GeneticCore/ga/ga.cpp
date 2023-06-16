@@ -40,7 +40,7 @@ void Population::setClassesAmount(std::map<Subject *, int> amount) {
 void Population::generateRandom() {
     for (int p{0}; p<this->size; p++) {
         // generate new individual
-        Timetable pop = Timetable(timetableLength, classCount, &usedWeights);
+        Timetable pop = Timetable(timetableLength, classCount, const_cast<std::vector<float>*>(&usedWeights));
         pop.setClassesAmount(classesAmount);
         pop.randomizeTimetable();
         // add individual to all population
@@ -49,19 +49,27 @@ void Population::generateRandom() {
 	randomGene = std::uniform_int_distribution<int>(0, pops[0].getClassCount() - 1);
 }
 
-//
-// SELECTIONS
-//
-
 void Population::crossRoulette() {
-    // init random
-
     std::vector<float> scoredVector;
 
     for (int popIndex{0}; popIndex<this->size; popIndex++) {
 		if (pops[popIndex].scoreChanged) {
         	pops[popIndex].calculateScore();
 			pops[popIndex].scoreChanged = false;
+
+            // handle priority queue of best results
+            if (pops[popIndex].currentScore > bestScoreThreshold) {
+                // could be placed in top-100
+                bestResults.push(pops[popIndex]);
+
+                // check if already is a top 100
+                if (bestResults.size() > 100) {
+                    // remove the worst element
+                    bestResults.pop();
+                    // move the threshold to current minimum
+                    bestScoreThreshold = bestResults.top().currentScore;
+                }
+            }
 		}
         scoredVector.push_back(std::max(pops[popIndex].currentScore, 0.0f));
     }
