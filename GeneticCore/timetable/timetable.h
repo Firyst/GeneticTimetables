@@ -14,25 +14,19 @@
 
 
 struct Subject{
-    Subject(int _id, std::string _name, std::vector<std::vector<bool>> slots);
+    Subject(int _id, std::string _name, std::string _teacher, std::vector<std::vector<bool>> slots);
 
     int id;
     std::string name;
+    std::string teacher;
     std::vector<std::vector<bool>> availableSlots;
     // maybe something else here..
 };
 
-struct Teacher {
-    std::string name;
-    std::set<Subject*> subjects;  // not implemented
-
-    explicit Teacher(std::string _name);
-};
 
 struct Class {
     int day;   // day id
     int order; // order in day
-    Teacher* teacher;
     Subject* subject;
 
 	Class(Subject* _subject);
