@@ -125,16 +125,6 @@ void Population::crossRoulette() {
 //
 
 void Population::defaultCrossover(Timetable *parent1, Timetable *parent2, int crossoverPoint) {
-    /**
-     * @brief runs a default crossover (over a point)
-     *
-     * This function just takes takes some days from second parent
-     *
-     * @param parent1 the parent that will be edited
-     * @param parent2 the parent to take genes from
-     * @param crossoverPoint int in range [0; number_of_genes]
-     */
-
     // pass genes
 
     for (int geneId{0}; geneId < crossoverPoint; geneId++) {

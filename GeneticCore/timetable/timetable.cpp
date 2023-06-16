@@ -146,9 +146,6 @@ std::string Timetable::toString() {
 }
 
 void Timetable::calculateScore() {
-    /**
-     * @brief calculates score for current individual and set it as variable
-     */
 
     float averageClassCount = (float)this->getClassCount() / (float)this->getLength();
     float score{0};

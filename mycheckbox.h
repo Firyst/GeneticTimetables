@@ -5,12 +5,12 @@
 #include <QCheckBox>
 #include <QLabel>
 
-/**
- * Mycheckbox class used for changing state on checkboxes
- */
 
 class SelectorDialog;
 
+/**
+ * @brief The Mycheckbox class used for changing state on checkboxes and store some variables
+ */
 class MyCheckBox : public QCheckBox
 {
     Q_OBJECT

@@ -7,51 +7,74 @@
 #include <set>
 #include <unordered_set>
 
+/**
+ * @brief The UniquePriorityQueue class basically a std::priority_queue but with uniquness check
+ */
 template<typename T>
 class UniquePriorityQueue {
 public:
+    /**
+     * @brief push basic push
+     * @param val value to push
+     * @return true if is unique, false if was in container already
+     */
     bool push(const T& val) {
-        // Проверяем, не содержится ли уже значение в наборе
+        // check if in
         if (uniqueElements.find(val) != uniqueElements.end()) {
-            // Значение уже содержится в наборе, возвращаем false
+            // contains
             return false;
         }
 
-        // Добавляем значение в очередь и набор
+        // add to queue
         priorityQueue.push(val);
         uniqueElements.insert(val);
 
         return true;
     }
 
+    /**
+     * @brief pop pops the least value
+     */
     void pop() {
         if (!priorityQueue.empty()) {
-            // Удаляем значение из набора
+            // remove from set
             uniqueElements.erase(priorityQueue.top());
-            // Удаляем значение из очереди
+            // remove from queue
             priorityQueue.pop();
         }
     }
 
+    /**
+     * @brief top get the best in queue
+     * @return best element
+     */
     T top() {
         if (!priorityQueue.empty()) {
             return priorityQueue.top();
         }
-        // Здесь вы должны обрабатывать ситуацию, когда очередь пуста.
+        // no top
         throw std::logic_error("Queue is empty.");
     }
 
+    /**
+     * @brief empty check if empty
+     * @return bool
+     */
     bool empty() {
         return priorityQueue.empty();
     }
 
+    /**
+     * @brief size get size
+     * @return size_t size
+     */
     size_t size() {
         return priorityQueue.size();
     }
 
 private:
-    std::priority_queue<T> priorityQueue;
-    std::unordered_set<T> uniqueElements;
+    std::priority_queue<T> priorityQueue; ///< used queue
+    std::unordered_set<T> uniqueElements; ///< used set
 };
 
 #endif // UNIQUEPRIORITYQUEUE_H

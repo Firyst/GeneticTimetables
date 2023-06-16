@@ -222,6 +222,7 @@ void MainWindow::saveConfigurationClicked()
 
 void MainWindow::startGeneration() {
     this->ui->runButton->setEnabled(false);
+    ui->pushButtonBack->setEnabled(false);
 
     // initalize vector of GA parameters
     std::vector<int> inputParams = {(int)parameters[10]->getCurrentValue(),
@@ -278,6 +279,7 @@ void MainWindow::generationFinished() {
 
     ui->resultSelector->setEnabled(true);
     ui->exportButton->setEnabled(true);
+    ui->pushButtonBack->setEnabled(true);
     ui->resultSelector->setValue(1);
 
     viewResult(1);
