@@ -81,6 +81,7 @@ public:
 
 
 // define hashes
+// source: https://stackoverflow.com/questions/13890747/hash-function-for-user-defined-class-how-to-make-friends
 namespace std {
 template<>
 struct hash<Timetable> {

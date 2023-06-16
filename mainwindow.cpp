@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->saveConfigurationButton, SIGNAL(released()), this, SLOT(saveConfigurationClicked()));
     connect(ui->runButton, SIGNAL(released()), this, SLOT(startGeneration()));
     connect(ui->resultSelector, SIGNAL(valueChanged(int)), this, SLOT(viewResult(int)));
+    connect(ui->exportButton, SIGNAL(released()), this, SLOT(saveTable()));
     pageChanged(0);
 
     // setup my thread
@@ -325,12 +326,14 @@ void MainWindow::setTimetableOutput(Timetable* table) {
             if (structuredTimetable[std::pair<int, int>(dayI, slotI)] == nullptr) {
                 outputTableModel.setData(outputTableModel.index(slotI, dayI), "---");
             } else {
-                outputTableModel.setData(outputTableModel.index(slotI, dayI), QString::fromStdString( structuredTimetable[std::pair<int, int>(dayI, slotI)]->name ));
+                outputTableModel.setData(outputTableModel.index(slotI, dayI), QString::fromStdString( structuredTimetable[std::pair<int, int>(dayI, slotI)]->name +
+                                                                                                     " | " + structuredTimetable[std::pair<int, int>(dayI, slotI)]->teacher));
             }
         }
     }
 
     ui->outputTable->setModel(&outputTableModel);
+    ui->outputTable->resizeColumnsToContents();
 }
 
 void MainWindow::viewResult(int position) {
@@ -340,11 +343,38 @@ void MainWindow::viewResult(int position) {
 }
 
 void MainWindow::saveTable() {
+    // Получаем путь к файлу для сохранения с помощью QFileDialog
+    QString filePath = QFileDialog::getSaveFileName(nullptr, "Save CSV File", "", "CSV Files (*.csv)");
 
+    if (!filePath.isEmpty()) {
+        exportCurrentTable(filePath);
+    }
 }
 
 void MainWindow::exportCurrentTable(const QString& filePath) {
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qDebug() << "file IO error";
+        return;
+    }
 
+    QTextStream out(&file);
+
+    // write data
+    for (int row = 0; row < outputTableModel.rowCount(); ++row)
+    {
+        for (int column = 0; column < outputTableModel.columnCount(); ++column)
+        {
+            QString data = outputTableModel.data(outputTableModel.index(row, column)).toString();
+            out << data;
+            if (column < outputTableModel.columnCount() - 1)
+                out << ';';
+        }
+        out << '\n';
+    }
+
+    file.close();
 }
 
 void GAThread::run(void) {
