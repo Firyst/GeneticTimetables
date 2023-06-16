@@ -37,6 +37,9 @@ signals:
 
 };
 
+/**
+ * @brief The MainWindow class used for working in main window
+ */
 
 class MainWindow : public QMainWindow
 {
@@ -45,8 +48,28 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    /**
+     * @brief removeRule used for deleting whole line subject
+     * @param objectIndex is int number of this subject
+     */
     void removeRule(int objectIndex);
+
+    /**
+     * @brief createParameterWidgets used for creating new sliders
+     * @param name is string parameter of slider name
+     * @param value is int default value of slider
+     * @param start is int default start value of slider
+     * @param end is int default end value of slider
+     * @param step is float default step value of slider
+     * @param target is pointer to layout
+     * @param suffix is string parameter name of slider value
+     */
     void createParameterWidgets(QString name, int value, int start, int end, float step, QVBoxLayout* target, QString suffix="x");
+
+    /**
+     * @brief parameters is pointer's array of slider's parameters
+     */
     std::vector<std::unique_ptr<ParameterWidget>> parameters;
 
 
@@ -65,6 +88,10 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    /**
+     * @brief addedRules is pointer's array of subject's information(name, teacher, amount)
+     */
     std::vector<std::unique_ptr<RuleForm>> addedRules;
     GAThread workerThread;
     std::vector<Timetable> bestResultBuffer;

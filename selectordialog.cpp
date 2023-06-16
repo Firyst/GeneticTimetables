@@ -26,8 +26,6 @@ SelectorDialog::SelectorDialog(RuleForm *parent, int days, int pairs) :
             }
         }
     }
-
-
     ui->gridLayout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 }
 

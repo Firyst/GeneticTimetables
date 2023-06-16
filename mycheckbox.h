@@ -26,7 +26,6 @@ public:
     int y;
     SelectorDialog* parentClass;
 
-
 public slots:
     /**
      * @brief onStateChanged2 function change state on checkboxes

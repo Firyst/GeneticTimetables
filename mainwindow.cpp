@@ -22,8 +22,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->scrollAreaWidgetContents->layout()->setAlignment(Qt::AlignTop);
 
-
-
     // connect buttons
     connect(ui->pushButtonNext, SIGNAL(released()), this, SLOT(nextButtonClicked()));
     connect(ui->pushButtonBack, SIGNAL(released()), this, SLOT(backButtonClicked()));
@@ -40,11 +38,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&workerThread, SIGNAL(progressSignal(long)), this, SLOT(generationProgress(long)));
     connect(&workerThread, SIGNAL(finishedSignal()), this, SLOT(generationFinished()));
 
-
     // create all sliders
     createParameterWidgets( "Select time period", 3, 2, 12, 1, ui->mainLayout, " days");
     createParameterWidgets( "Select the number of pairs per day", 2, 2, 8, 1, ui->mainLayout, " pairs");
-
 
     createParameterWidgets( "Conflicts", 25, 10, 100, 1, ui->criteriaLayout);       // 2
     createParameterWidgets( "Time bounds", 20, 0, 10, 0.1, ui->criteriaLayout);     // 3
@@ -63,8 +59,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->mainLayout->setAlignment(Qt::AlignTop);
     ui->criteriaLayout->setAlignment(Qt::AlignTop);
     ui->layoutParameters->setAlignment(Qt::AlignTop);
-
-
 }
 
 MainWindow::~MainWindow()
@@ -163,7 +157,6 @@ void MainWindow::importClicked()
                         j++;
                     }
                 }
-
             } else {
                 qDebug() << "Failed to parse JSON document.";
             }
@@ -171,16 +164,12 @@ void MainWindow::importClicked()
             qDebug() << "Failed to open file:" << file.errorString();
         }
     }
-
 }
-
 
 void MainWindow::saveConfigurationClicked()
 {
-    //QJsonDocument data; // создание объекта Document
     QJsonObject data;
 
-    // добавление пар ключ-значение в объект
     for (int i=0; i<(int)parameters.size(); i++){
         data.insert("Slider_" + QString::number(i), parameters[i].get()->getCurrentValue());
     }
@@ -205,7 +194,6 @@ void MainWindow::saveConfigurationClicked()
             }
             ruleMatrix.append(jsonRow);
         }
-
         ruleObject.insert("Selected", ruleMatrix);
         ruleArray.append(ruleObject);
     }
@@ -214,22 +202,21 @@ void MainWindow::saveConfigurationClicked()
     QJsonDocument result(data);
 
     QString fileName = QFileDialog::getSaveFileName(nullptr, "Сохранить JSON файл", "", "JSON Files (*.json)");
-    // Если пользователь выбрал файл
+    // if user choose file
     if (!fileName.isEmpty()) {
-        // Создание файла для записи
+        // creation file for notes
         QFile file(fileName);
 
-        // Попытка открыть файл в режиме записи
+        // attemp to open file for notes
         if (file.open(QIODevice::WriteOnly)) {
-            // Запись QJsonDocument в файл
+            // note QJsonDocument into the file
             file.write(result.toJson());
             file.close();
-            qDebug() << "Файл сохранен:" << fileName;
+            qDebug() << "File is saved:" << fileName;
         } else {
-            qDebug() << "Ошибка при открытии файла для записи.";
+            qDebug() << "Error in opening file for notes";
         }
     }
-
 }
 
 
@@ -254,12 +241,10 @@ void MainWindow::startGeneration() {
         // qDebug() << classesRules[ruleI]
     }
 
-
     // create new population and set it to the thread
     workerThread.population = std::make_unique<Population>(parameters[9]->getCurrentValue(), parameters[0]->getCurrentValue(), parameters[1]->getCurrentValue(), inputParams, weights);
     workerThread.population.get()->setCrossoverMode(1);
     workerThread.population.get()->setClassesAmount(classesRules);
-
 
     workerThread.iterations = parameters[8].get()->getCurrentValue();
     workerThread.start();
@@ -343,7 +328,7 @@ void MainWindow::viewResult(int position) {
 }
 
 void MainWindow::saveTable() {
-    // Получаем путь к файлу для сохранения с помощью QFileDialog
+    // receive path to file for saving with QFileDialog
     QString filePath = QFileDialog::getSaveFileName(nullptr, "Save CSV File", "", "CSV Files (*.csv)");
 
     if (!filePath.isEmpty()) {
@@ -373,7 +358,6 @@ void MainWindow::exportCurrentTable(const QString& filePath) {
         }
         out << '\n';
     }
-
     file.close();
 }
 
