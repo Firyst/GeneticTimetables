@@ -261,3 +261,29 @@ bool Timetable::operator<(const Timetable& other) const
     // compare scores
     return currentScore > other.currentScore;
 }
+
+bool Timetable::operator==(const Timetable& other) const {
+    if (classes.size() != other.classes.size()) {
+        return false;
+    }
+    for (int i{0}; i < (int)classes.size(); i++) {
+        if (classes[i].day != other.classes[i].day || classes[i].order != other.classes[i].order || classes[i].subject != other.classes[i].subject) {
+            return false;
+        }
+    }
+    return true;
+}
+/*
+namespace std {
+size_t std::hash<Timetable>::operator()(const Timetable& obj) const {
+    size_t hash = 0;
+
+    for (int i{0}; i < (int)obj.classes.size(); i++) {
+        hash ^= std::hash<int>()(obj.classes[i].day);
+        hash ^= std::hash<int>()(obj.classes[i].order);
+        hash ^= std::hash<int>()(obj.classes[i].subject->id);
+    }
+    return std::hash<int>()(hash);
+}
+}
+*/

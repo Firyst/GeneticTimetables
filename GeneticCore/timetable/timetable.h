@@ -11,6 +11,7 @@
 #include <set>
 #include <map>
 #include <random>
+#include <functional>
 
 
 struct Subject{
@@ -74,6 +75,29 @@ public:
      * @return true if current timetable score is larger
      */
     bool operator<(const Timetable& other) const;
+    bool operator==(const Timetable& other) const;
+
+
+
 };
+
+namespace std {
+template<>
+struct hash<Timetable> {
+    size_t operator()(const Timetable& obj) const {
+        size_t hash = 0;
+
+        hash ^= std::hash<int>()(obj.getLength());
+
+
+        for (int i{0}; i < (int)obj.classes.size(); i++) {
+            hash ^= std::hash<int>()(obj.classes[i].day * (i + 1) * 31);
+            hash ^= std::hash<int>()(obj.classes[i].order * (i + 1) * 31);
+            hash ^= std::hash<int>()(obj.classes[i].subject->id);
+        }
+        return std::hash<int>()(hash);
+    }
+};
+}
 
 #endif //GA_PLAYGROUND_TIMETABLE_H

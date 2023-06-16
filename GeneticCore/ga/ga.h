@@ -7,6 +7,7 @@
 
 
 #include "../timetable/timetable.h"
+#include "../uniquepriorityqueue.h"
 #include <vector>
 #include <random>
 #include <queue>
@@ -89,7 +90,7 @@ public:
 
     float getAverageScore();
 
-    std::priority_queue<Timetable> bestResults;
+    UniquePriorityQueue<Timetable> bestResults;
 
 	/**
 	 * Population constructor

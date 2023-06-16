@@ -13,7 +13,7 @@ TEMPLATE = app
 
 SOURCES += \
     GeneticCore/uniquepriorityqueue.cpp \
-    Tests/testqueue.cpp \
+    Tests/test.cpp \
     main.cpp \
     mainwindow.cpp \
     mycheckbox.cpp \
@@ -44,6 +44,7 @@ FORMS += \
 TRANSLATIONS += \
     QtLanguage_ru.ts \
     QtLanguage_en.ts
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
