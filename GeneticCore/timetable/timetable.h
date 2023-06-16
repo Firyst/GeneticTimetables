@@ -77,10 +77,10 @@ public:
     bool operator<(const Timetable& other) const;
     bool operator==(const Timetable& other) const;
 
-
-
 };
 
+
+// define hashes
 namespace std {
 template<>
 struct hash<Timetable> {

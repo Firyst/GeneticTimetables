@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>736</width>
+    <width>891</width>
     <height>583</height>
    </rect>
   </property>
@@ -111,8 +111,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>76</width>
-             <height>16</height>
+             <width>66</width>
+             <height>18</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -219,7 +219,7 @@
             <item>
              <widget class="QLabel" name="labelTime">
               <property name="text">
-               <string>0:00:00/0:00:00</string>
+               <string>Elapsed: 0:00:00 / Left: 0:00:00</string>
               </property>
              </widget>
             </item>
@@ -249,9 +249,15 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,1">
+           <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,1,1">
             <property name="spacing">
              <number>6</number>
+            </property>
+            <property name="leftMargin">
+             <number>9</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
             </property>
             <item>
              <spacer name="horizontalSpacer_4">
@@ -268,6 +274,9 @@
             </item>
             <item>
              <widget class="QSpinBox" name="resultSelector">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
@@ -281,13 +290,23 @@
                <string> (from top-100)</string>
               </property>
               <property name="prefix">
-               <string>View result №</string>
+               <string>Result №</string>
               </property>
               <property name="minimum">
                <number>1</number>
               </property>
               <property name="maximum">
                <number>100</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="exportButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Export</string>
               </property>
              </widget>
             </item>
@@ -347,8 +366,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>736</width>
-     <height>17</height>
+     <width>891</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>

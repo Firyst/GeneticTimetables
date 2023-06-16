@@ -27,7 +27,7 @@ public:
     std::chrono::milliseconds lastExecutionTime;
     std::unique_ptr<Population> population;
     long iterations{0};
-    const long step = 250;
+    const long step = 200;
 
     void run(void);
 
@@ -61,6 +61,7 @@ private slots:
     void generationProgress(long generation);
     void generationFinished();
     void viewResult(int position);
+    void saveTable();
 
 private:
     Ui::MainWindow *ui;
@@ -68,6 +69,7 @@ private:
     GAThread workerThread;
     std::vector<Timetable> bestResultBuffer;
     void setTimetableOutput(Timetable* table);
+    void exportCurrentTable(const QString& filePath);
     QStandardItemModel outputTableModel;
 
 };

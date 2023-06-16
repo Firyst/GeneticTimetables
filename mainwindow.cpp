@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
     createParameterWidgets( "Gaps", 20, 0, 10, 0.1, ui->criteriaLayout);            // 5
     createParameterWidgets( "Week balance", 10, 0, 10, 0.1, ui->criteriaLayout);    // 6
     createParameterWidgets( "Diversity", 10, -5, 5, 0.1, ui->criteriaLayout);       // 7
-    createParameterWidgets( "Preferred begin and End time", 10, 0, 10, 0.1, ui->criteriaLayout); // 8
+    // createParameterWidgets( "Preferred begin and End time", 10, 0, 10, 0.1, ui->criteriaLayout); // 8
 
     createParameterWidgets( "Generations", 20, 500, 100000, 500, ui->layoutParameters, "");     // 9
     createParameterWidgets( "Population size", 20, 50, 2500, 50, ui->layoutParameters, "");     // 10
@@ -62,6 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->mainLayout->setAlignment(Qt::AlignTop);
     ui->criteriaLayout->setAlignment(Qt::AlignTop);
     ui->layoutParameters->setAlignment(Qt::AlignTop);
+
 
 }
 
@@ -235,9 +236,9 @@ void MainWindow::startGeneration() {
     this->ui->runButton->setEnabled(false);
 
     // initalize vector of GA parameters
-    std::vector<int> inputParams = {(int)parameters[11]->getCurrentValue(),
-                                    (int)parameters[12]->getCurrentValue(),
-                                    (int)parameters[13]->getCurrentValue()};
+    std::vector<int> inputParams = {(int)parameters[10]->getCurrentValue(),
+                                    (int)parameters[11]->getCurrentValue(),
+                                    (int)parameters[12]->getCurrentValue()};
 
     // initialize vector of weights
     std::vector<float> weights;
@@ -249,21 +250,22 @@ void MainWindow::startGeneration() {
     // parse subject data
     for (int ruleI{0}; ruleI < (int)addedRules.size(); ruleI++) {
         classesRules[addedRules[ruleI].get()->getSubjectData()] = addedRules[ruleI].get()->getAmount();
+        // qDebug() << classesRules[ruleI]
     }
 
 
     // create new population and set it to the thread
-    workerThread.population = std::make_unique<Population>(parameters[10]->getCurrentValue(), parameters[0]->getCurrentValue(), parameters[1]->getCurrentValue(), inputParams, weights);
+    workerThread.population = std::make_unique<Population>(parameters[9]->getCurrentValue(), parameters[0]->getCurrentValue(), parameters[1]->getCurrentValue(), inputParams, weights);
     workerThread.population.get()->setCrossoverMode(1);
-    workerThread.population.get()->setClassesAmount(std::move(classesRules));
+    workerThread.population.get()->setClassesAmount(classesRules);
 
 
-    workerThread.iterations = parameters[9].get()->getCurrentValue();
+    workerThread.iterations = parameters[8].get()->getCurrentValue();
     workerThread.start();
 }
 
 void MainWindow::generationProgress(long generation) {
-    int totalGenerations = parameters[9].get()->getCurrentValue();
+    int totalGenerations = parameters[8].get()->getCurrentValue();
     ui->progressBar->setValue((int)(100.0f * generation / totalGenerations));
     auto runTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - workerThread.startTime);
 
@@ -273,7 +275,7 @@ void MainWindow::generationProgress(long generation) {
     execTime = execTime.addMSecs(runTime.count());
     leftTime = leftTime.addMSecs((totalGenerations - generation) * workerThread.lastExecutionTime.count() / workerThread.step);
 
-    ui->labelTime->setText(execTime.toString("h:mm:ss") + "/ Left: " + leftTime.toString("h:mm:ss"));
+    ui->labelTime->setText("Elasped: " + execTime.toString("h:mm:ss") + " / Left: " + leftTime.toString("h:mm:ss"));
 }
 
 void MainWindow::generationFinished() {
@@ -287,14 +289,17 @@ void MainWindow::generationFinished() {
         bestResultBuffer.push_back(workerThread.population->bestResults.top());
         workerThread.population->bestResults.pop();
     }
+
+    ui->resultSelector->setEnabled(true);
+    ui->exportButton->setEnabled(true);
     ui->resultSelector->setValue(1);
+
+    viewResult(1);
 }
 
 void MainWindow::setTimetableOutput(Timetable* table) {
     int daysCount = parameters[0].get()->getCurrentValue();
     int slotsCount = parameters[1].get()->getCurrentValue();
-
-    // qDebug() << table->toString();
 
     outputTableModel.clear();
     outputTableModel.setColumnCount(daysCount);
@@ -329,8 +334,17 @@ void MainWindow::setTimetableOutput(Timetable* table) {
 }
 
 void MainWindow::viewResult(int position) {
+    qDebug() << position;
     qDebug() << bestResultBuffer[100 - position].currentScore;
     setTimetableOutput(&bestResultBuffer[100 - position]);
+}
+
+void MainWindow::saveTable() {
+
+}
+
+void MainWindow::exportCurrentTable(const QString& filePath) {
+
 }
 
 void GAThread::run(void) {

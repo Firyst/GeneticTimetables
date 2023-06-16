@@ -1,18 +1,17 @@
 {
     "Slider_0": 3,
     "Slider_1": 4,
-    "Slider_10": 2500,
-    "Slider_11": 7,
-    "Slider_12": 3,
-    "Slider_13": 0.009999999776482582,
+    "Slider_9": 2500,
+    "Slider_10": 7,
+    "Slider_11": 3,
+    "Slider_12": 0.009999999776482582,
     "Slider_2": 25,
     "Slider_3": 7.200000286102295,
     "Slider_4": 0.5,
     "Slider_5": 3,
     "Slider_6": 0.5,
     "Slider_7": 1,
-    "Slider_8": 1,
-    "Slider_9": 40000,
+    "Slider_8": 40000,
     "rules": [
         {
             "Amount": 3,

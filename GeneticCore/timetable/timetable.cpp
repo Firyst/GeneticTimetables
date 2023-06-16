@@ -126,8 +126,8 @@ std::string Timetable::toString() {
 		for (int order_i = 0; order_i<classCount; order_i++) {
 			Class* matchingClass = nullptr;
 
-			// try to find class (bad code)
-			for (int i = 0; i < classes.size(); i++) {
+            // try to find class (bad code)
+            for (int i = 0; i < (int)classes.size(); i++) {
 				if (classes.at(i).day == day_i && classes.at(i).order == order_i) {
 					// has class
 					matchingClass = &classes[i];
@@ -273,17 +273,3 @@ bool Timetable::operator==(const Timetable& other) const {
     }
     return true;
 }
-/*
-namespace std {
-size_t std::hash<Timetable>::operator()(const Timetable& obj) const {
-    size_t hash = 0;
-
-    for (int i{0}; i < (int)obj.classes.size(); i++) {
-        hash ^= std::hash<int>()(obj.classes[i].day);
-        hash ^= std::hash<int>()(obj.classes[i].order);
-        hash ^= std::hash<int>()(obj.classes[i].subject->id);
-    }
-    return std::hash<int>()(hash);
-}
-}
-*/
