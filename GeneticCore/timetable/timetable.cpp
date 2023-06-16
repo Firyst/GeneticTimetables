@@ -26,30 +26,23 @@ int getRandomNumber(int min, int max)
 
 /// classes for timetable realisation
 
-Subject::Subject(int _id, std::string _name, std::vector<std::vector<bool>> slots) {
+Subject::Subject(int _id, std::string _name, std::string _teacher, std::vector<std::vector<bool>> slots) {
     id = _id;
     name = std::move(_name);
+    teacher = std::move(_teacher);
     availableSlots = slots;
-}
-
-
-
-Teacher::Teacher(std::string _name) {
-    name = std::move(_name);
 }
 
 
 Class::Class(int _day, int _order, Subject* _subject) {
     day = _day;
     order = _order;
-    teacher = nullptr;
     subject = _subject;
 }
 
 Class::Class( Subject *_subject) {
 	day = 0;
 	order = 0;
-	teacher = nullptr;
 	subject = _subject;
 }
 
@@ -169,13 +162,18 @@ void Timetable::calculateScore() {
     }
 
     // go through all classes and struct them
-    for (int counter{0}; counter<classes.size(); counter++) {
+    for (int counter{0}; counter < classes.size(); counter++) {
         // check for overlaps
         if (structuredClasses[classes[counter].day][classes[counter].order] != nullptr) {
             score -= 100.0f * weights->at(0);
         }
 
         structuredClasses[classes[counter].day][classes[counter].order] = &classes[counter];
+
+        // check for time slots
+        if (!classes[counter].subject->availableSlots[classes[counter].day + 2][classes[counter].order + 2]) {
+            score -= 10.0f * weights->at(1);
+        }
     }
 
     for (int day_i{0}; day_i < this->getLength(); day_i++) {
