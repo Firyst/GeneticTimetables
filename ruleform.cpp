@@ -60,6 +60,9 @@ void RuleForm::setValues(QString subject, QString teacher, int amount)
     ui->spinBoxNumberPairs->setValue(amount);
 }
 
-Subject* getSubjectData() {
-
+Subject* RuleForm::getSubjectData() {
+    subjectData.id = id;
+    subjectData.name = getSubject().toStdString();
+    subjectData.availableSlots = selected;
+    return &subjectData;
 }

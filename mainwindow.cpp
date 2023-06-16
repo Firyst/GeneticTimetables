@@ -6,12 +6,12 @@
 #include <memory>
 #include <vector>
 #include <QFile>
+#include <QTime>
 #include <QFileDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QJsonArray>
-#include <iostream>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -35,7 +35,8 @@ MainWindow::MainWindow(QWidget *parent)
     pageChanged(0);
 
     // setup my thread
-    connect(&workerThread, SIGNAL(progressSignal(int)), this, SLOT(generationProgress(int)));
+    connect(&workerThread, SIGNAL(progressSignal(long)), this, SLOT(generationProgress(long)));
+    connect(&workerThread, SIGNAL(finishedSignal()), this, SLOT(generationFinished()));
 
 
     // create all sliders
@@ -92,7 +93,7 @@ void MainWindow::addButtonClicked()
 
 void MainWindow::removeRule(int objectIndex) {
     addedRules.erase(addedRules.begin() + objectIndex);
-    for (int currentIndex{objectIndex}; currentIndex < this->addedRules.size(); currentIndex++) {
+    for (int currentIndex{objectIndex}; currentIndex < (int)this->addedRules.size(); currentIndex++) {
         addedRules[currentIndex].get()->id -= 1;
     }
 }
@@ -101,6 +102,7 @@ void MainWindow::pageChanged(int index)
 {
     if (index==4){
         ui->pushButtonNext->hide();
+        // update progressbar
     }else{
         ui->pushButtonNext->show();
     }
@@ -132,7 +134,7 @@ void MainWindow::importClicked()
             if (!jsonDoc.isNull()) {
                 QJsonObject data = jsonDoc.object();
 
-                for (int i=0; i<parameters.size(); i++){
+                for (int i=0; i<(int)parameters.size(); i++){
                     parameters[i].get()->setCurrentValue(data.value("Slider_" + QString::number(i)).toDouble());
                 }
 
@@ -176,13 +178,13 @@ void MainWindow::saveConfigurationClicked()
     QJsonObject data;
 
     // добавление пар ключ-значение в объект
-    for (int i=0; i<parameters.size(); i++){
+    for (int i=0; i<(int)parameters.size(); i++){
         data.insert("Slider_" + QString::number(i), parameters[i].get()->getCurrentValue());
     }
 
     QJsonArray ruleArray;
 
-    for (int i = 0; i < addedRules.size() ; i++){
+    for (int i = 0; i < (int)addedRules.size() ; i++){
         QJsonObject ruleObject;
         ruleObject.insert("Subject", addedRules[i].get()->getSubject());
         ruleObject.insert("Teacher", addedRules[i].get()->getTeacher());
@@ -242,16 +244,92 @@ void MainWindow::startGeneration() {
         weights.push_back(parameters[wI]->getCurrentValue());
     }
 
-    // create new population
-    Population newPopulation(parameters[10]->getCurrentValue(), parameters[0]->getCurrentValue(), parameters[1]->getCurrentValue(), inputParams, weights);
-    workerThread.population = std::move(newPopulation);
+    std::map<Subject*, int> classesRules;
+    // parse subject data
+    for (int ruleI{0}; ruleI < (int)addedRules.size(); ruleI++) {
+        classesRules[addedRules[ruleI].get()->getSubjectData()] = addedRules[ruleI].get()->getAmount();
+    }
+
+
+    // create new population and set it to the thread
+    workerThread.population = std::make_unique<Population>(parameters[10]->getCurrentValue(), parameters[0]->getCurrentValue(), parameters[1]->getCurrentValue(), inputParams, weights);
+    workerThread.population.get()->setCrossoverMode(1);
+    workerThread.population.get()->setClassesAmount(std::move(classesRules));
+
+
+    workerThread.iterations = parameters[9].get()->getCurrentValue();
+    workerThread.start();
 }
 
-void MainWindow::generationProgress(int generation) {
-    qDebug() << generation;
+void MainWindow::generationProgress(long generation) {
+    int totalGenerations = parameters[9].get()->getCurrentValue();
+    ui->progressBar->setValue((int)(100.0f * generation / totalGenerations));
+    auto runTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - workerThread.startTime);
+
+    // calulate time
+    QTime execTime(0, 0, 0);
+    QTime leftTime(0, 0, 0);
+    execTime = execTime.addMSecs(runTime.count());
+    leftTime = leftTime.addMSecs((totalGenerations - generation) * workerThread.lastExecutionTime.count() / workerThread.step);
+
+    ui->labelTime->setText(execTime.toString("h:mm:ss") + "/ Left: " + leftTime.toString("h:mm:ss"));
 }
 
 void MainWindow::generationFinished() {
+    qDebug() << "finished generation";
+    ui->runButton->setEnabled(true);
+    ui->progressBar->setValue(100);
+    setTimetableOutput(workerThread.population.get()->getBestResult());
+}
+
+void MainWindow::setTimetableOutput(Timetable* table) {
+    int daysCount = parameters[0].get()->getCurrentValue();
+    int slotsCount = parameters[1].get()->getCurrentValue();
+
+    // qDebug() << table->toString();
+
+    outputTableModel.clear();
+    outputTableModel.setColumnCount(daysCount);
+    outputTableModel.setRowCount(slotsCount);
+
+    std::map<std::pair<int, int>, Subject*> structuredTimetable;
+
+    // init table
+    for (int dayI{0}; dayI < daysCount; dayI++) {
+        for (int slotI{0}; slotI < slotsCount; slotI++) {
+            structuredTimetable[std::pair<int, int>(dayI, slotI)] = nullptr;
+        }
+    }
+
+    // add classes
+    for (auto currentClass : table->classes) {
+        structuredTimetable[std::pair<int, int>(currentClass.day, currentClass.order)] = currentClass.subject;
+    }
+
+    // output timetable
+    for (int dayI{0}; dayI < daysCount; dayI++) {
+        for (int slotI{0}; slotI < slotsCount; slotI++) {
+            if (structuredTimetable[std::pair<int, int>(dayI, slotI)] == nullptr) {
+                outputTableModel.setData(outputTableModel.index(slotI, dayI), "---");
+            } else {
+                outputTableModel.setData(outputTableModel.index(slotI, dayI), QString::fromStdString( structuredTimetable[std::pair<int, int>(dayI, slotI)]->name ));
+            }
+        }
+    }
+
+    ui->outputTable->setModel(&outputTableModel);
+
 
 }
 
+void GAThread::run(void) {
+    startTime = std::chrono::high_resolution_clock::now();
+    population->generateRandom();
+    for (long current{0}; current < (iterations / step); current++) {
+        auto iterStartTime = std::chrono::high_resolution_clock::now();
+        population.get()->evolve(step);
+        lastExecutionTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - iterStartTime);
+        emit progressSignal(current * step);
+    }
+    emit finishedSignal();
+}

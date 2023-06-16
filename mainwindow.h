@@ -10,7 +10,9 @@
 #include "parameterwidget.h"
 #include "GeneticCore/ga/ga.h"
 #include <QThread>
-
+#include <memory>
+#include <chrono>
+#include <QStandardItemModel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,16 +23,16 @@ class GAThread : public QThread {
     Q_OBJECT
 
 public:
-    Population population = Population(0, 0, 0, {0}, {1.0});
+    std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
+    std::chrono::milliseconds lastExecutionTime;
+    std::unique_ptr<Population> population;
     long iterations{0};
+    const long step = 250;
 
-    void run(void)
-    {
-        // Код, выполняемый в отдельном потоке
-    }
+    void run(void);
 
 signals:
-    void progressSignal(int );
+    void progressSignal(long );
     void finishedSignal(void );
 
 };
@@ -56,13 +58,15 @@ private slots:
     void importClicked();
     void saveConfigurationClicked();
     void startGeneration();
-    void generationProgress(int generation);
+    void generationProgress(long generation);
     void generationFinished();
 
 private:
     Ui::MainWindow *ui;
     std::vector<std::unique_ptr<RuleForm>> addedRules;
     GAThread workerThread;
+    void setTimetableOutput(Timetable* table);
+    QStandardItemModel outputTableModel;
 
 };
 #endif // MAINWINDOW_H
