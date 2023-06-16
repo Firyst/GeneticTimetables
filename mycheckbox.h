@@ -5,6 +5,10 @@
 #include <QCheckBox>
 #include <QLabel>
 
+/**
+ * Mycheckbox class used for changing state on checkboxes
+ */
+
 class SelectorDialog;
 
 class MyCheckBox : public QCheckBox
@@ -12,6 +16,11 @@ class MyCheckBox : public QCheckBox
     Q_OBJECT
 
 public:
+    /**
+     * @brief MyCheckBox constructor
+     * @param x is number of days
+     * @param y is number of pairs
+     */
     MyCheckBox(int x, int y);
     int x;
     int y;
@@ -19,6 +28,10 @@ public:
 
 
 public slots:
+    /**
+     * @brief onStateChanged2 function change state on checkboxes
+     * @param state is bool param for chechbox
+     */
     void onStateChanged2(int state);
 
 };
