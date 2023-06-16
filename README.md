@@ -67,7 +67,7 @@ Firstly there is just empty window.
 
 After pushing the button “Run” the process will start. Working time is counted, also it is shown time left and status bar. 
 Shown timetable is the most successful. In addition, other successful results can be shown by increasing the spin box of number result. 
-Timetables will save with pushing button “Export”. If user wants to take configuration, it also can be made by button “Save configuration”.
+Timetable will be saved with pushing button “Export”. If user wants to take configuration, it also can be made by button “Save configuration”.
  
 ![изображение](https://github.com/Firyst/GeneticTimetables/assets/113290258/28de482f-c960-463f-bca6-0f874bfff1ff)
 
