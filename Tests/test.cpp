@@ -153,4 +153,86 @@ TEST_SUITE("My priority queue") {
         REQUIRE(myQueue.size() == 2);
     }
 }
+
+TEST_SUITE("Subject") {
+    std::vector<std::vector<bool>> testSlots;
+    TEST_CASE("Init") {
+        REQUIRE_NOTHROW(Subject(0, "name", "teacher", testSlots));
+    }
+
+    TEST_CASE("data correct") {
+        Subject sub(0, "name", "teacher", testSlots);
+        REQUIRE((sub.name == "name"));
+        REQUIRE(sub.teacher == "teacher");
+        REQUIRE(sub.id == 0);
+    }
+}
+
+TEST_SUITE("Timetable") {
+    std::vector<std::vector<bool>> testSlots;
+    Subject testSubject = Subject(0, "name", "teacher", testSlots);
+    std::map<Subject*, int> rules = {{&testSubject, 1}};
+
+
+    TEST_CASE("Init") {
+        std::vector<float> testWeights = {1.0, 2.0, 3.0};
+        REQUIRE_NOTHROW(Timetable test(2, 2, &testWeights));
+    }
+
+    TEST_CASE("Init empty 2") {
+        std::vector<float> testWeights = {1.0, 2.0, 3.0};
+        Timetable test(2, 2, &testWeights);
+        REQUIRE(test.classes.size() == 0);
+        REQUIRE(test.scoreChanged);
+    }
+
+    TEST_CASE("Randomize") {
+        std::vector<float> testWeights = {1.0, 2.0, 3.0};
+        Timetable test(2, 2, &testWeights);
+        test.setClassesAmount(rules);
+        test.randomizeTimetable();
+        REQUIRE(test.classes.size() == 1 );
+    }
+
+    TEST_CASE("Randomize 1") {
+        rules[&testSubject] = 2;
+        std::vector<float> testWeights = {1.0, 2.0, 3.0};
+        Timetable test(2, 2, &testWeights);
+        test.setClassesAmount(rules);
+        test.randomizeTimetable();
+        REQUIRE(test.classes.size() == 2 );
+    }
+
+    TEST_CASE("Randomize 2") {
+        rules[&testSubject] = 3;
+        std::vector<float> testWeights = {1.0, 2.0, 3.0};
+        Timetable test(2, 2, &testWeights);
+        test.setClassesAmount(rules);
+        test.randomizeTimetable();
+        REQUIRE(test.classes.size() == 3 );
+    }
+
+    TEST_CASE("Randomize 3") {
+        rules[&testSubject] = 1;
+        std::vector<float> testWeights = {1.0, 2.0, 3.0};
+        Timetable test(2, 2, &testWeights);
+        test.setClassesAmount(rules);
+        test.randomizeTimetable();
+        test.randomizeTimetable();
+        REQUIRE(test.classes.size() == 1 );
+    }
+
+    TEST_CASE("Randomize 5") {
+        std::vector<float> testWeights = {1.0, 2.0, 3.0};
+        rules[&testSubject] = 2;
+        Subject testS2 = Subject(22, "", "", testSlots);
+        rules[&testS2] = 1;
+        Timetable test(2, 2, &testWeights);
+        test.setClassesAmount(rules);
+        test.randomizeTimetable();
+        REQUIRE(test.classes.size() == 3 );
+    }
+
+
+}
 #endif

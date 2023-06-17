@@ -325,8 +325,8 @@ void MainWindow::setTimetableOutput(Timetable* table) {
 
 void MainWindow::viewResult(int position) {
     qDebug() << position;
-    qDebug() << bestResultBuffer[100 - position].currentScore;
-    setTimetableOutput(&bestResultBuffer[100 - position]);
+    qDebug() << bestResultBuffer[bestResultBuffer.size() - position].currentScore;
+    setTimetableOutput(&bestResultBuffer[bestResultBuffer.size() - position]);
 }
 
 void MainWindow::saveTable() {
