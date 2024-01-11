@@ -41,19 +41,16 @@ public:
      */
     QString getTeacher();
 
-    /**
-     * @brief getAmount used for receiving number of pairs for the subject
-     * @return int number of pairs
-     */
-    int getAmount();
+
+    QString getGroup();
 
     /**
      * @brief setValues used for imported configuration to fill parameters
      * @param subject is string text name of subject
      * @param teacher is string text name of teacher
-     * @param amount is int number of pairs for the subject
+     * @param group is group name
      */
-    void setValues(QString subject, QString teacher, int amount);
+    void setValues(QString subject, QString teacher, QString group);
 
     /**
      * @brief getSubjectData contains id number of line, name of the subject and selected

@@ -26,6 +26,7 @@ struct Subject{
     int id; ///< id
     std::string name; ///< subject shown name
     std::string teacher; ///< subject shown teacher
+    std::string group;
     std::vector<std::vector<bool>> availableSlots; ///< bool table of available slots
     // maybe something else here..
 };

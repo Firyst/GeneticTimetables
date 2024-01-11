@@ -16,36 +16,39 @@
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QLineEdit" name="lineSubject">
+     <property name="text">
+      <string/>
+     </property>
      <property name="placeholderText">
-      <string>Subject name</string>
+      <string>Дисциплина</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QLineEdit" name="lineTeacher">
      <property name="placeholderText">
-      <string>Teacher</string>
+      <string>Преподаватель</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QSpinBox" name="spinBoxNumberPairs">
-     <property name="value">
-      <number>1</number>
+    <widget class="QLineEdit" name="lineGroup">
+     <property name="placeholderText">
+      <string>Контингент</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="pushButtonMore">
      <property name="text">
-      <string>Edit</string>
+      <string>Пожелания</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="pushButtonDelete">
      <property name="text">
-      <string>Delete</string>
+      <string>Убрать</string>
      </property>
     </widget>
    </item>

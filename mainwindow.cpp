@@ -39,19 +39,23 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&workerThread, SIGNAL(finishedSignal()), this, SLOT(generationFinished()));
 
     // create all sliders
-    createParameterWidgets( "Select time period", 3, 2, 12, 1, ui->mainLayout, " days");
-    createParameterWidgets( "Select the number of pairs per day", 2, 2, 8, 1, ui->mainLayout, " pairs");
+    createParameterWidgets( "Длина сессии", 3, 2, 12, 1, ui->mainLayout, " дней");
+    createParameterWidgets( "Слоты экзаменов", 2, 2, 12, 1, ui->mainLayout, " слотов");
 
     createParameterWidgets( "Conflicts", 25, 10, 100, 1, ui->criteriaLayout);       // 2
     createParameterWidgets( "Time bounds", 20, 0, 10, 0.1, ui->criteriaLayout);     // 3
-    createParameterWidgets( "Repeats", 10, -5, 5, 0.1, ui->criteriaLayout);         // 4
-    createParameterWidgets( "Gaps", 20, 0, 10, 0.1, ui->criteriaLayout);            // 5
+    createParameterWidgets( "Repeats", 0, -5, 5, 0.1, ui->criteriaLayout);         // 4
+    parameters[parameters.size() - 1]->hide();
+    createParameterWidgets( "Gaps", 0, 0, 10, 0.1, ui->criteriaLayout);            // 5
+    parameters[parameters.size() - 1]->hide();
     createParameterWidgets( "Week balance", 10, 0, 10, 0.1, ui->criteriaLayout);    // 6
-    createParameterWidgets( "Diversity", 10, -5, 5, 0.1, ui->criteriaLayout);       // 7
+
+    createParameterWidgets( "Diversity", 0, -5, 0, 0.1, ui->criteriaLayout);       // 7
+    parameters[parameters.size() - 1]->hide();
     // createParameterWidgets( "Preferred begin and End time", 10, 0, 10, 0.1, ui->criteriaLayout); // 8
 
     createParameterWidgets( "Generations", 20, 500, 100000, 500, ui->layoutParameters, "");     // 9
-    createParameterWidgets( "Population size", 20, 50, 2500, 50, ui->layoutParameters, "");     // 10
+    createParameterWidgets( "Population size", 20, 50, 25000, 50, ui->layoutParameters, "");     // 10
     createParameterWidgets( "Crossover chance", 35, 0, 100, 1, ui->layoutParameters, "%");      // 11
     createParameterWidgets( "Mutation chance", 24, 0, 100, 1, ui->layoutParameters, "%");
     createParameterWidgets( "Mutation threshold", 10, 0, 1, 0.005, ui->layoutParameters);
@@ -143,7 +147,7 @@ void MainWindow::importClicked()
                     addedRule->show();
                     addedRule->id = addedRules.size() - 1;
                     addedRule->parentWindow = this;
-                    addedRule->setValues(object.value("Subject").toString(), object.value("Teacher").toString(), object.value("Amount").toInt());
+                    addedRule->setValues(object.value("Subject").toString(), object.value("Teacher").toString(), object.value("Group").toString());
 
                     QJsonArray matrix = object.value("Selected").toArray();
                     int j=0;
@@ -180,7 +184,7 @@ void MainWindow::saveConfigurationClicked()
         QJsonObject ruleObject;
         ruleObject.insert("Subject", addedRules[i].get()->getSubject());
         ruleObject.insert("Teacher", addedRules[i].get()->getTeacher());
-        ruleObject.insert("Amount", addedRules[i].get()->getAmount());
+        ruleObject.insert("Group", addedRules[i].get()->getGroup());
 
         std::vector<std::vector<bool>> matrix = addedRules[i].get()->selected;
         QJsonArray ruleMatrix;
@@ -238,7 +242,7 @@ void MainWindow::startGeneration() {
     std::map<Subject*, int> classesRules;
     // parse subject data
     for (int ruleI{0}; ruleI < (int)addedRules.size(); ruleI++) {
-        classesRules[addedRules[ruleI].get()->getSubjectData()] = addedRules[ruleI].get()->getAmount();
+        classesRules[addedRules[ruleI].get()->getSubjectData()] = 1;//addedRules[ruleI].get()->getAmount();
         // qDebug() << classesRules[ruleI]
     }
 
@@ -270,6 +274,7 @@ void MainWindow::generationFinished() {
     ui->runButton->setEnabled(true);
     ui->progressBar->setValue(100);
     setTimetableOutput(workerThread.population.get()->getBestResult());
+    qDebug() << workerThread.population->getAverageScore();
 
     bestResultBuffer.clear();
     while(!workerThread.population->bestResults.empty()) {
@@ -282,7 +287,7 @@ void MainWindow::generationFinished() {
     ui->pushButtonBack->setEnabled(true);
     ui->resultSelector->setValue(1);
 
-    viewResult(1);
+    // viewResult(1);
 }
 
 void MainWindow::setTimetableOutput(Timetable* table) {
@@ -325,6 +330,7 @@ void MainWindow::setTimetableOutput(Timetable* table) {
 
 void MainWindow::viewResult(int position) {
     qDebug() << position;
+    qDebug() << bestResultBuffer.size();
     qDebug() << bestResultBuffer[bestResultBuffer.size() - position].currentScore;
     setTimetableOutput(&bestResultBuffer[bestResultBuffer.size() - position]);
 }

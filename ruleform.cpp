@@ -16,8 +16,6 @@ RuleForm::RuleForm(QWidget *parent, int days, int pairs) :
     connect(ui->pushButtonMore, SIGNAL(released()), this, SLOT(editPushButtonClicked()));
     connect(ui->pushButtonDelete, SIGNAL(released()), this, SLOT(deletePushButtonClicked()));
 
-    ui->spinBoxNumberPairs->setMaximum(days*pairs);
-
     // subjectData = Subject(1, "undefined", "undefined", selected);
 
 
@@ -48,16 +46,17 @@ QString RuleForm::getTeacher()
     return ui->lineTeacher->text();
 }
 
-int RuleForm::getAmount()
+QString RuleForm::getGroup()
 {
-    return ui->spinBoxNumberPairs->value();
+    return ui->lineGroup->text();
 }
 
-void RuleForm::setValues(QString subject, QString teacher, int amount)
+
+void RuleForm::setValues(QString subject, QString teacher, QString group)
 {
     ui->lineSubject->setText(subject);
     ui->lineTeacher->setText(teacher);
-    ui->spinBoxNumberPairs->setValue(amount);
+    ui->lineGroup->setText(group);
 }
 
 Subject* RuleForm::getSubjectData() {

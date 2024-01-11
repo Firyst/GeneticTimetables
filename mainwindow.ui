@@ -111,8 +111,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>59</width>
-             <height>22</height>
+             <width>853</width>
+             <height>404</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -249,7 +249,7 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,1,1">
+           <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,1,1,1">
             <property name="spacing">
              <number>6</number>
             </property>
@@ -271,6 +271,9 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QComboBox" name="groupSelector"/>
             </item>
             <item>
              <widget class="QSpinBox" name="resultSelector">
@@ -367,7 +370,7 @@
      <x>0</x>
      <y>0</y>
      <width>891</width>
-     <height>27</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
