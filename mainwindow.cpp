@@ -237,6 +237,7 @@ void MainWindow::startGeneration() {
     std::vector<float> weights;
     for (int wI{2}; wI<8; wI++) {
         weights.push_back(parameters[wI]->getCurrentValue());
+        qDebug() << parameters[wI]->getCurrentValue();
     }
 
     std::map<Subject*, int> classesRules;

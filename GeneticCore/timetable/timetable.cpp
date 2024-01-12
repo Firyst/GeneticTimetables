@@ -172,7 +172,7 @@ void Timetable::calculateScore() {
             score -= 10.0f * weights->at(1);
         }
     }
-
+    /*
     for (int day_i{0}; day_i < this->getLength(); day_i++) {
         // iterate through days
 
@@ -237,21 +237,21 @@ void Timetable::calculateScore() {
         }
 
 		// Repeats
-		score -= weights->at(2) * (float)repeatedClasses;
+        // score -= weights->at(2) * (float)repeatedClasses;
 		// Week balance
-        score -= powf(std::abs((float)dayClassCount - averageClassCount), 2) * weights->at(4);
+        // score -= powf(std::abs((float)dayClassCount - averageClassCount), 2) * weights->at(4);
 		// Gaps
-        score += weights->at(3) * (float)(classCount - gaps);
+        // score += weights->at(3) * (float)(classCount - gaps);
 		// Diversity (percentage of unique classes)
-		if (uniqueClasses + dayClassCount != 0) {
-			score += weights->at(5) * ((float)uniqueClasses / (float)dayClassCount);
-		}
+        //if (uniqueClasses + dayClassCount != 0) {
+        //	score += weights->at(5) * ((float)uniqueClasses / (float)dayClassCount);
+        // }
 
 
     }
-
+    */
     // store current calculated score into memory
-    currentScore = score;
+    currentScore = score + 5000;
 }
 
 bool Timetable::operator<(const Timetable& other) const

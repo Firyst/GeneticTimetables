@@ -8,6 +8,7 @@
 #include <random>
 #include <map>
 #include <algorithm>
+#include <QDebug>
 
 
 // init random generator
@@ -114,10 +115,11 @@ void Population::crossRoulette() {
 				continue;
 			}
 
-			smartMutation(&pops[popIndex]);
+            randomMutation(&pops[popIndex]);
 		}
 	}
 	genAverageScore = newScore;
+    qDebug() << genAverageScore;
 }
 
 //
