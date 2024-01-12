@@ -8,7 +8,7 @@ RuleForm::RuleForm(QWidget *parent, int days, int pairs) :
     QWidget(parent),
     ui(new Ui::RuleForm),
     selected(days+2, std::vector<bool>(pairs+2, false)),
-    subjectData(this->id, "Unnamed", "Unnamed", selected)
+    subjectData(this->id, "Unnamed", "Unnamed", "Undefined", selected)
 {
     this->days = days;
     this->pairs = pairs;
@@ -63,6 +63,7 @@ Subject* RuleForm::getSubjectData() {
     subjectData.id = id;
     subjectData.name = getSubject().toStdString();
     subjectData.teacher = getTeacher().toStdString();
+    subjectData.group = getGroup().toStdString();
     subjectData.availableSlots = selected;
     return &subjectData;
 }

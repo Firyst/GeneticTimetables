@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->importButton, SIGNAL(released()), this, SLOT(importClicked()));
     connect(ui->saveConfigurationButton, SIGNAL(released()), this, SLOT(saveConfigurationClicked()));
     connect(ui->runButton, SIGNAL(released()), this, SLOT(startGeneration()));
-    connect(ui->resultSelector, SIGNAL(valueChanged(int)), this, SLOT(viewResult(int)));
+    // connect(ui->resultSelector, SIGNAL(valueChanged(int)), this, SLOT(viewResult(int)));
     connect(ui->exportButton, SIGNAL(released()), this, SLOT(saveTable()));
     pageChanged(0);
 
@@ -282,10 +282,10 @@ void MainWindow::generationFinished() {
         workerThread.population->bestResults.pop();
     }
 
-    ui->resultSelector->setEnabled(true);
+    // ui->resultSelector->setEnabled(true);
     ui->exportButton->setEnabled(true);
     ui->pushButtonBack->setEnabled(true);
-    ui->resultSelector->setValue(1);
+    // ui->resultSelector->setValue(1);
 
     // viewResult(1);
 }
@@ -299,6 +299,7 @@ void MainWindow::setTimetableOutput(Timetable* table) {
     outputTableModel.setRowCount(slotsCount);
 
     std::map<std::pair<int, int>, Subject*> structuredTimetable;
+    std::vector<std::string> used_groups;
 
     // init table
     for (int dayI{0}; dayI < daysCount; dayI++) {
@@ -310,6 +311,12 @@ void MainWindow::setTimetableOutput(Timetable* table) {
     // add classes
     for (auto currentClass : table->classes) {
         structuredTimetable[std::pair<int, int>(currentClass.day, currentClass.order)] = currentClass.subject;
+
+        // add used groups (once)
+        if (std::find(used_groups.begin(), used_groups.end(), currentClass.subject->group) == used_groups.end()) {
+            used_groups.push_back(currentClass.subject->group);
+        }
+
     }
 
     // output timetable
@@ -326,6 +333,10 @@ void MainWindow::setTimetableOutput(Timetable* table) {
 
     ui->outputTable->setModel(&outputTableModel);
     ui->outputTable->resizeColumnsToContents();
+    ui->groupSelector->addItem(QString("Все"));
+    for (auto group_name : used_groups) {
+        ui->groupSelector->addItem(QString::fromStdString(group_name));
+    }
 }
 
 void MainWindow::viewResult(int position) {

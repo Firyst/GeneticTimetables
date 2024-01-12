@@ -21,7 +21,7 @@ struct Subject{
     /**
      * @brief constructs the subject
      */
-    Subject(int _id, std::string _name, std::string _teacher, std::vector<std::vector<bool>> slots);
+    Subject(int _id, std::string _name, std::string _teacher, std::string _group, std::vector<std::vector<bool>> slots);
 
     int id; ///< id
     std::string name; ///< subject shown name

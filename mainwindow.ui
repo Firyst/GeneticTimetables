@@ -111,8 +111,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>853</width>
-             <height>404</height>
+             <width>98</width>
+             <height>28</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -249,7 +249,7 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,1,1,1">
+           <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,1,1">
             <property name="spacing">
              <number>6</number>
             </property>
@@ -274,34 +274,6 @@
             </item>
             <item>
              <widget class="QComboBox" name="groupSelector"/>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="resultSelector">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="buttonSymbols">
-               <enum>QAbstractSpinBox::UpDownArrows</enum>
-              </property>
-              <property name="correctionMode">
-               <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
-              </property>
-              <property name="suffix">
-               <string> (from top-100)</string>
-              </property>
-              <property name="prefix">
-               <string>Result №</string>
-              </property>
-              <property name="minimum">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <number>100</number>
-              </property>
-             </widget>
             </item>
             <item>
              <widget class="QPushButton" name="exportButton">
@@ -370,7 +342,7 @@
      <x>0</x>
      <y>0</y>
      <width>891</width>
-     <height>21</height>
+     <height>17</height>
     </rect>
    </property>
   </widget>

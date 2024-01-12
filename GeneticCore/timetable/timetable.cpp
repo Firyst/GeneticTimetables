@@ -26,10 +26,11 @@ int getRandomNumber(int min, int max)
 
 /// classes for timetable realisation
 
-Subject::Subject(int _id, std::string _name, std::string _teacher, std::vector<std::vector<bool>> slots) {
+Subject::Subject(int _id, std::string _name, std::string _teacher, std::string _group, std::vector<std::vector<bool>> slots) {
     id = _id;
     name = std::move(_name);
     teacher = std::move(_teacher);
+    group = std::move(_group);
     availableSlots = slots;
 }
 
