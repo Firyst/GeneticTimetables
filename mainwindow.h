@@ -98,6 +98,7 @@ private slots:
     void generationFinished();
     void viewResult(int position);
     void saveTable();
+    void changeFilter(QString filter);
 
 private:
     Ui::MainWindow *ui;
@@ -113,7 +114,7 @@ private:
      * @brief setTimetableOutput draw timetable to output
      * @param table Timetable to draw
      */
-    void setTimetableOutput(Timetable* table);
+    void setTimetableOutput(Timetable* table, QString filter=QString("Все"));
 
     /**
      * @brief exportCurrentTable exports the selected timetable

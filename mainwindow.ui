@@ -52,7 +52,7 @@
             <item>
              <widget class="QPushButton" name="importButton">
               <property name="text">
-               <string>Import</string>
+               <string>загрузка</string>
               </property>
              </widget>
             </item>
@@ -82,7 +82,7 @@
           <item>
            <widget class="QPushButton" name="pushButtonAdd">
             <property name="text">
-             <string>Add </string>
+             <string>Добавить</string>
             </property>
            </widget>
           </item>
@@ -111,8 +111,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>28</height>
+             <width>853</width>
+             <height>404</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -186,7 +186,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Generate</string>
+             <string>Оптимизация</string>
             </property>
            </widget>
           </item>
@@ -198,14 +198,14 @@
             <item>
              <widget class="QPushButton" name="saveConfigurationButton">
               <property name="text">
-               <string>Save configuration</string>
+               <string>Сохранить настройки</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="runButton">
               <property name="text">
-               <string>Run</string>
+               <string>Запуск</string>
               </property>
              </widget>
             </item>
@@ -281,7 +281,7 @@
                <bool>false</bool>
               </property>
               <property name="text">
-               <string>Export</string>
+               <string>Выгрузка (CSV)</string>
               </property>
              </widget>
             </item>
@@ -289,11 +289,38 @@
           </item>
           <item>
            <widget class="QTableView" name="outputTable">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
             <property name="frameShape">
              <enum>QFrame::Box</enum>
             </property>
             <property name="frameShadow">
              <enum>QFrame::Sunken</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QProgressBar" name="scoreBar">
+            <property name="styleSheet">
+             <string notr="true">QProgressBar::chunk {
+background-color: rgb(58, 222, 255)
+}</string>
+            </property>
+            <property name="minimum">
+             <number>-1000</number>
+            </property>
+            <property name="maximum">
+             <number>0</number>
+            </property>
+            <property name="value">
+             <number>-1000</number>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="format">
+             <string>%v</string>
             </property>
            </widget>
           </item>
@@ -308,7 +335,7 @@
       <item>
        <widget class="QPushButton" name="pushButtonBack">
         <property name="text">
-         <string>Back</string>
+         <string>Назад</string>
         </property>
        </widget>
       </item>
@@ -328,7 +355,7 @@
       <item>
        <widget class="QPushButton" name="pushButtonNext">
         <property name="text">
-         <string>Next Page</string>
+         <string>Далее</string>
         </property>
        </widget>
       </item>
@@ -342,7 +369,7 @@
      <x>0</x>
      <y>0</y>
      <width>891</width>
-     <height>17</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

@@ -1,0 +1,325 @@
+{
+    "Slider_0": 5,
+    "Slider_1": 6,
+    "Slider_10": 6,
+    "Slider_11": 2,
+    "Slider_12": 0.04999999701976776,
+    "Slider_2": 20,
+    "Slider_3": 10,
+    "Slider_4": 0,
+    "Slider_5": 0,
+    "Slider_6": 1,
+    "Slider_7": 0,
+    "Slider_8": 10000,
+    "Slider_9": 5000,
+    "rules": [
+        {
+            "Group": "БИБ222",
+            "Selected": [
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    true,
+                    false,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ]
+            ],
+            "Subject": "1",
+            "Teacher": "1"
+        },
+        {
+            "Group": "БИБ222",
+            "Selected": [
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    true,
+                    false,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ]
+            ],
+            "Subject": "2",
+            "Teacher": "2"
+        },
+        {
+            "Group": "БИБ223",
+            "Selected": [
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    true,
+                    false,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ]
+            ],
+            "Subject": "3",
+            "Teacher": "3"
+        },
+        {
+            "Group": "БИБ223",
+            "Selected": [
+                [
+                    false,
+                    false,
+                    false,
+                    true,
+                    false,
+                    true,
+                    false,
+                    true
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    true,
+                    false,
+                    true,
+                    false,
+                    true
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    true,
+                    false,
+                    true,
+                    false,
+                    true
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    true,
+                    false,
+                    true,
+                    false,
+                    true
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    true,
+                    false,
+                    true,
+                    false,
+                    true
+                ],
+                [
+                    false,
+                    false,
+                    false,
+                    true,
+                    false,
+                    true,
+                    false,
+                    true
+                ]
+            ],
+            "Subject": "4",
+            "Teacher": "4"
+        }
+    ]
+}

@@ -34,6 +34,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->exportButton, SIGNAL(released()), this, SLOT(saveTable()));
     pageChanged(0);
 
+    connect(ui->groupSelector, SIGNAL(currentTextChanged(QString)), this, SLOT(changeFilter(QString)));
+
     // setup my thread
     connect(&workerThread, SIGNAL(progressSignal(long)), this, SLOT(generationProgress(long)));
     connect(&workerThread, SIGNAL(finishedSignal()), this, SLOT(generationFinished()));
@@ -59,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
     createParameterWidgets( "Crossover chance", 35, 0, 100, 1, ui->layoutParameters, "%");      // 11
     createParameterWidgets( "Mutation chance", 24, 0, 100, 1, ui->layoutParameters, "%");
     createParameterWidgets( "Mutation threshold", 10, 0, 1, 0.005, ui->layoutParameters);
+
 
     ui->mainLayout->setAlignment(Qt::AlignTop);
     ui->criteriaLayout->setAlignment(Qt::AlignTop);
@@ -227,6 +230,7 @@ void MainWindow::saveConfigurationClicked()
 void MainWindow::startGeneration() {
     this->ui->runButton->setEnabled(false);
     ui->pushButtonBack->setEnabled(false);
+    ui->groupSelector->setEnabled(false);
 
     // initalize vector of GA parameters
     std::vector<int> inputParams = {(int)parameters[10]->getCurrentValue(),
@@ -259,6 +263,7 @@ void MainWindow::startGeneration() {
 void MainWindow::generationProgress(long generation) {
     int totalGenerations = parameters[8].get()->getCurrentValue();
     ui->progressBar->setValue((int)(100.0f * generation / totalGenerations));
+    ui->scoreBar->setValue(int(workerThread.population->genAverageScore)-5000);
     auto runTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - workerThread.startTime);
 
     // calulate time
@@ -267,7 +272,7 @@ void MainWindow::generationProgress(long generation) {
     execTime = execTime.addMSecs(runTime.count());
     leftTime = leftTime.addMSecs((totalGenerations - generation) * workerThread.lastExecutionTime.count() / workerThread.step);
 
-    ui->labelTime->setText("Elasped: " + execTime.toString("h:mm:ss") + " / Left: " + leftTime.toString("h:mm:ss"));
+    ui->labelTime->setText("Прошло: " + execTime.toString("h:mm:ss") + " / Осталось: " + leftTime.toString("h:mm:ss"));
 }
 
 void MainWindow::generationFinished() {
@@ -277,21 +282,28 @@ void MainWindow::generationFinished() {
     setTimetableOutput(workerThread.population.get()->getBestResult());
     qDebug() << workerThread.population->getAverageScore();
 
+    /*    currently not used
     bestResultBuffer.clear();
     while(!workerThread.population->bestResults.empty()) {
         bestResultBuffer.push_back(workerThread.population->bestResults.top());
         workerThread.population->bestResults.pop();
-    }
+    }*/
 
     // ui->resultSelector->setEnabled(true);
     ui->exportButton->setEnabled(true);
     ui->pushButtonBack->setEnabled(true);
+    ui->groupSelector->setEnabled(true);
     // ui->resultSelector->setValue(1);
 
     // viewResult(1);
 }
 
-void MainWindow::setTimetableOutput(Timetable* table) {
+void MainWindow::changeFilter(QString filter) {
+    this->setTimetableOutput(workerThread.population.get()->getBestResult(), filter);
+}
+
+void MainWindow::setTimetableOutput(Timetable* table, QString filter) {
+    qDebug() << filter;
     int daysCount = parameters[0].get()->getCurrentValue();
     int slotsCount = parameters[1].get()->getCurrentValue();
 
@@ -300,7 +312,7 @@ void MainWindow::setTimetableOutput(Timetable* table) {
     outputTableModel.setRowCount(slotsCount);
 
     std::map<std::pair<int, int>, Subject*> structuredTimetable;
-    std::vector<std::string> used_groups;
+    std::vector<QString> used_groups;
 
     // init table
     for (int dayI{0}; dayI < daysCount; dayI++) {
@@ -311,13 +323,36 @@ void MainWindow::setTimetableOutput(Timetable* table) {
 
     // add classes
     for (auto currentClass : table->classes) {
-        structuredTimetable[std::pair<int, int>(currentClass.day, currentClass.order)] = currentClass.subject;
+        // check if group is correct
 
-        // add used groups (once)
-        if (std::find(used_groups.begin(), used_groups.end(), currentClass.subject->group) == used_groups.end()) {
-            used_groups.push_back(currentClass.subject->group);
+        QString groupName = QString::fromStdString(currentClass.subject->group);
+
+        if (groupName.length() == 6) {
+            // add used groups + streams(once)
+            auto stream_name = groupName.sliced(0, 5);
+
+            if (std::find(used_groups.begin(), used_groups.end(), groupName) == used_groups.end()) {
+                used_groups.push_back(groupName);
+
+                if (std::find(used_groups.begin(), used_groups.end(), stream_name + "*") == used_groups.end()) {
+                    used_groups.push_back(stream_name + "*");
+                }
+            }
+
+            // check group filter
+            if (filter != QString("Все")) {
+                // has filter
+                if (filter == groupName || (filter.sliced(5) == QString("*") && filter.sliced(0, 5) == stream_name)) {
+                    structuredTimetable[std::pair<int, int>(currentClass.day, currentClass.order)] = currentClass.subject;
+                }
+            } else {
+                // everyone filter set
+                structuredTimetable[std::pair<int, int>(currentClass.day, currentClass.order)] = currentClass.subject;
+            }
+        } else {
+            // not a patterned group name
+            structuredTimetable[std::pair<int, int>(currentClass.day, currentClass.order)] = currentClass.subject;
         }
-
     }
 
     // output timetable
@@ -327,16 +362,30 @@ void MainWindow::setTimetableOutput(Timetable* table) {
                 outputTableModel.setData(outputTableModel.index(slotI, dayI), "---");
             } else {
                 outputTableModel.setData(outputTableModel.index(slotI, dayI), QString::fromStdString( structuredTimetable[std::pair<int, int>(dayI, slotI)]->name +
-                                                                                                     " | " + structuredTimetable[std::pair<int, int>(dayI, slotI)]->teacher));
+                                                                                                     " у " + structuredTimetable[std::pair<int, int>(dayI, slotI)]->group + ", преп. " +
+                                                                                                     structuredTimetable[std::pair<int, int>(dayI, slotI)]->teacher));
             }
         }
     }
 
     ui->outputTable->setModel(&outputTableModel);
-    ui->outputTable->resizeColumnsToContents();
-    ui->groupSelector->addItem(QString("Все"));
-    for (auto group_name : used_groups) {
-        ui->groupSelector->addItem(QString::fromStdString(group_name));
+    //ui->outputTable->resizeColumnsToContents();
+
+    for (int i=1; i<parameters[0].get()->getCurrentValue(); i++) {
+        ui->outputTable->setColumnWidth(i, 200);
+    }
+
+    // add filter only on beginning
+    if (filter == QString("Все")) {
+        // fill the group selector
+        ui->groupSelector->blockSignals(true);
+        std::sort(used_groups.begin(), used_groups.end());
+        ui->groupSelector->clear();
+        ui->groupSelector->addItem(QString("Все"));
+        for (auto group_name : used_groups) {
+            ui->groupSelector->addItem(group_name);
+        }
+        ui->groupSelector->blockSignals(false);
     }
 }
 
