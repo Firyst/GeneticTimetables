@@ -1,6 +1,7 @@
 #include <utility>
 #include <vector>
 #include <string>
+
 #include "timetable.h"
 #include <random>
 #include <set>
@@ -148,8 +149,11 @@ std::string Timetable::toString() {
 
 void Timetable::calculateScore() {
 
-    float averageClassCount = (float)this->getClassCount() / (float)this->getLength();
+    // float averageClassCount = (float)this->getClassCount() / (float)this->getLength();
     float score{0};
+
+    // for each group (not stream) store all days with exams
+    std::map<std::string, std::vector<int>> groupExamDays;
 
     std::vector<std::vector<Class*>> structuredClasses;
 
@@ -161,8 +165,34 @@ void Timetable::calculateScore() {
     // go through all classes and struct them
     for (int counter{0}; counter < classes.size(); counter++) {
         // check for overlaps
-        if (structuredClasses[classes[counter].day][classes[counter].order] != nullptr) {
-            score -= 100.0f * weights->at(0);
+        auto class2 = structuredClasses[classes[counter].day][classes[counter].order];
+        if (class2 != nullptr) {
+            // check if same teacher
+            if (class2->subject->teacher == classes[counter].subject->teacher) {
+                score -= 80.0f * weights->at(0);
+            }
+
+            // check if valid group names
+            if (class2->subject->group.length() == 9 && classes[counter].subject->group.length() == 9) {
+                if (class2->subject->group == classes[counter].subject->group) {
+                    // same group
+                    score -= 80.0f * weights->at(0);
+                } else if (class2->subject->group.substr(0, 8) == classes[counter].subject->group.substr(0, 8)) {
+                    // same stream
+                    score -= 80.0f * weights->at(0);
+                }
+
+            }
+        }
+
+        auto group = classes[counter].subject->group;
+
+        if (group.length() == 9) {
+            // check if first appearance
+            if (!groupExamDays.count(group)) {
+                groupExamDays[group] = std::vector<int>{};
+            }
+            groupExamDays.at(group).emplace_back(classes[counter].day);
         }
 
         structuredClasses[classes[counter].day][classes[counter].order] = &classes[counter];
@@ -172,84 +202,31 @@ void Timetable::calculateScore() {
             score -= 10.0f * weights->at(1);
         }
     }
-    /*
-    for (int day_i{0}; day_i < this->getLength(); day_i++) {
-        // iterate through days
 
-        int dayClassCount{0};
-        int gaps{0};
-		int repeatedClasses{0};
-		int uniqueClasses{0};
-		Subject* previousClass{nullptr};
-		//std::set<Subject*> allClasses;
-		std::vector<Subject*> allClasses;
+    for (auto kvp : groupExamDays) {
+        auto days = kvp.second;
 
-        int firstClassOrder{-1};
-        int lastClassOrder{-1};
+        std::string stream = kvp.first.substr(0, 8) + "*";
 
-		if (this->currentScore > 30) {
-			int debug{0};
-		}
+        // count stream exams too
+        if (groupExamDays.count(stream)) {
+            days.insert(days.end(), groupExamDays[stream].begin(), groupExamDays[stream].end());
+        }
 
-        for (int order_i{0}; order_i < this->classCount; order_i++) {
-
-            if (structuredClasses[day_i][order_i] != nullptr) {
-                // not a gap, actually a class
-                if (firstClassOrder == -1) {
-                    // set up first class
-                    firstClassOrder = order_i;
-                }
-
-                // mark current class as last
-                lastClassOrder = order_i;
-                // increment class count
-                dayClassCount++;
-
-				// add to used classes
-				auto it = std::find(allClasses.begin(), allClasses.end(), structuredClasses[day_i][order_i]->subject);
-				if (it != allClasses.end()) {
-					uniqueClasses++;
-					allClasses.push_back(structuredClasses[day_i][order_i]->subject);
-				}
-
-
+        // get all days
+        std::sort(days.begin(), days.end());
+        for (int i{0}; i < days.size() -1; i++) {
+            int diff = days[i+1] - days[i];
+            if (diff == 0) {
+                // two exams a day
+                score -= 50.0f * weights->at(4);
             } else {
-                // gap
-                if (firstClassOrder != -1) {
-                    // midday gap
-                    gaps++;
-                }
+                score -= std::max(3 - diff, 0) * 8.0f * weights->at(4);  // 1 day - ok, 2 days - good, 3 days - super!
             }
-
-			// check if repeats previous class
-			if (structuredClasses[day_i][order_i] != nullptr) {
-				if (previousClass == structuredClasses[day_i][order_i]->subject) {
-					repeatedClasses++;
-				}
-				previousClass = structuredClasses[day_i][order_i]->subject;
-			}
-
         }
-
-        // final score calculations 👇
-        if (dayClassCount != 0) {
-            gaps -= (dayClassCount - lastClassOrder - 1);
-        }
-
-		// Repeats
-        // score -= weights->at(2) * (float)repeatedClasses;
-		// Week balance
-        // score -= powf(std::abs((float)dayClassCount - averageClassCount), 2) * weights->at(4);
-		// Gaps
-        // score += weights->at(3) * (float)(classCount - gaps);
-		// Diversity (percentage of unique classes)
-        //if (uniqueClasses + dayClassCount != 0) {
-        //	score += weights->at(5) * ((float)uniqueClasses / (float)dayClassCount);
-        // }
-
-
     }
-    */
+
+
     // store current calculated score into memory
     currentScore = score + 5000;
 }

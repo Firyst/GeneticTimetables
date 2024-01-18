@@ -306,7 +306,8 @@ void MainWindow::setTimetableOutput(Timetable* table, QString filter) {
     qDebug() << filter;
     int daysCount = parameters[0].get()->getCurrentValue();
     int slotsCount = parameters[1].get()->getCurrentValue();
-
+    qDebug() << table->currentScore;
+    table->calculateScore();
     outputTableModel.clear();
     outputTableModel.setColumnCount(daysCount);
     outputTableModel.setRowCount(slotsCount);
@@ -342,7 +343,7 @@ void MainWindow::setTimetableOutput(Timetable* table, QString filter) {
             // check group filter
             if (filter != QString("Все")) {
                 // has filter
-                if (filter == groupName || (filter.sliced(5) == QString("*") && filter.sliced(0, 5) == stream_name)) {
+                if (filter == groupName || (filter.sliced(5) == QString("*") && filter.sliced(0, 5) == stream_name) || (groupName.sliced(5) == QString("*") && filter.sliced(0, 5) == stream_name) ) {
                     structuredTimetable[std::pair<int, int>(currentClass.day, currentClass.order)] = currentClass.subject;
                 }
             } else {
@@ -362,17 +363,21 @@ void MainWindow::setTimetableOutput(Timetable* table, QString filter) {
                 outputTableModel.setData(outputTableModel.index(slotI, dayI), "---");
             } else {
                 outputTableModel.setData(outputTableModel.index(slotI, dayI), QString::fromStdString( structuredTimetable[std::pair<int, int>(dayI, slotI)]->name +
-                                                                                                     " у " + structuredTimetable[std::pair<int, int>(dayI, slotI)]->group + ", преп. " +
+                                                                                                     " у " + structuredTimetable[std::pair<int, int>(dayI, slotI)]->group + ", преп:\n" +
                                                                                                      structuredTimetable[std::pair<int, int>(dayI, slotI)]->teacher));
             }
         }
     }
 
     ui->outputTable->setModel(&outputTableModel);
-    //ui->outputTable->resizeColumnsToContents();
+    ui->outputTable->resizeColumnsToContents();
 
-    for (int i=1; i<parameters[0].get()->getCurrentValue(); i++) {
-        ui->outputTable->setColumnWidth(i, 200);
+    for (int i=0; i<parameters[0].get()->getCurrentValue(); i++) {
+        ui->outputTable->setColumnWidth(i, 180);
+    }
+
+    for (int i=0; i<parameters[1].get()->getCurrentValue(); i++) {
+        ui->outputTable->setRowHeight(i, 50);
     }
 
     // add filter only on beginning

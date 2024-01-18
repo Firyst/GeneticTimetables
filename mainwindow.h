@@ -30,7 +30,7 @@ public:
     std::chrono::milliseconds lastExecutionTime;  ///< last evolution time
     std::unique_ptr<Population> population;  ///< population to evolve
     long iterations{0}; ///< iterations to evolve
-    const long step = 200; ///< signal step
+    const long step = 50; ///< signal step
 
     /**
      * @brief run starts the thread
